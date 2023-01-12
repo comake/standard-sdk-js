@@ -26,10 +26,9 @@ class StandardSDKBase<T extends ApiSpecs> {
     if (args.apiSpecs) {
       const apiOperationInterfaces = this.createApiOperationHandlers(args.apiSpecs);
       Object.assign(this, apiOperationInterfaces);
-    } else if (args.skqlOptions) {
+    }
+    if (args.skqlOptions) {
       this._skql = new Skql(args.skqlOptions);
-    } else {
-      throw new Error('Must supply one of skqlOptions or apiSpecs.');
     }
   }
 
