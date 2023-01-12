@@ -102,6 +102,12 @@ module.exports = {
         trailingUnderscore: 'forbid',
       },
       {
+        selector: 'classProperty',
+        format: [ 'camelCase' ],
+        leadingUnderscore: 'allow',
+        trailingUnderscore: 'forbid',
+      },
+      {
         selector: 'typeLike',
         format: [ 'PascalCase' ],
       },
