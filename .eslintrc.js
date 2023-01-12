@@ -102,6 +102,12 @@ module.exports = {
         trailingUnderscore: 'forbid',
       },
       {
+        selector: 'classProperty',
+        format: [ 'camelCase' ],
+        leadingUnderscore: 'allow',
+        trailingUnderscore: 'forbid',
+      },
+      {
         selector: 'typeLike',
         format: [ 'PascalCase' ],
       },
@@ -128,6 +134,16 @@ module.exports = {
     // Doesn't work with type imports
     'no-duplicate-imports': 'off',
     'unused-imports/no-unused-imports-ts': 'error',
+
+    "@typescript-eslint/indent": [
+      "error",
+      2,
+      {
+        "ignoredNodes": [
+          "TSTypeParameterInstantiation",
+        ]
+      }
+    ],
   },
   overrides: [
     {
