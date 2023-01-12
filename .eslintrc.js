@@ -134,6 +134,16 @@ module.exports = {
     // Doesn't work with type imports
     'no-duplicate-imports': 'off',
     'unused-imports/no-unused-imports-ts': 'error',
+
+    "@typescript-eslint/indent": [
+      "error",
+      2,
+      {
+        "ignoredNodes": [
+          "TSTypeParameterInstantiation",
+        ]
+      }
+    ],
   },
   overrides: [
     {

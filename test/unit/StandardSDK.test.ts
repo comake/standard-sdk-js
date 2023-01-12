@@ -2,7 +2,7 @@ import type { OpenApi } from '@comake/openapi-operation-executor';
 import { Skql } from '@comake/skql-js-engine';
 import { OpenApiOperationExecutor } from '../../src/operation-executor/OpenApiOperationExecutor';
 import { StandardSDK } from '../../src/StandardSdk';
-import googleDriveOpenApiSpec from '../assets/google-drive-openapi.json';
+import ticketmasterOpenApiSpec from '../assets/ticketmaster-openapi.json';
 
 jest.mock('../../src/operation-executor/OpenApiOperationExecutor');
 
@@ -24,9 +24,9 @@ describe('A StandardSDK', (): void => {
     it('throws an error when accessing skql.', (): void => {
       const ssdk = StandardSDK.build({
         apiSpecs: {
-          googleDrive: {
+          ticketmaster: {
             type: 'openapi',
-            value: JSON.stringify(googleDriveOpenApiSpec),
+            value: JSON.stringify(ticketmasterOpenApiSpec),
           },
         },
       });
@@ -40,7 +40,7 @@ describe('A StandardSDK', (): void => {
         const ssdk = StandardSDK.build({
           apiSpecs: {
             github: {
-              type: 'graphql',
+              type: 'graphql' as any,
               value: '',
             },
           },
@@ -51,25 +51,25 @@ describe('A StandardSDK', (): void => {
     it('can query an open api operation interface from a spec specified as a string.', async(): Promise<void> => {
       const ssdk = StandardSDK.build({
         apiSpecs: {
-          googleDrive: {
+          ticketmaster: {
             type: 'openapi',
-            value: JSON.stringify(googleDriveOpenApiSpec),
+            value: JSON.stringify(ticketmasterOpenApiSpec),
           },
         },
       });
-      await expect(ssdk.googleDrive['drive.about.get']()).resolves.toBe('response');
+      await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
     });
 
     it('can query an open api operation interface from a spec specified as a json object.', async(): Promise<void> => {
       const ssdk = StandardSDK.build({
         apiSpecs: {
-          googleDrive: {
+          ticketmaster: {
             type: 'openapi',
-            value: googleDriveOpenApiSpec as OpenApi,
+            value: ticketmasterOpenApiSpec as OpenApi,
           },
         },
       });
-      await expect(ssdk.googleDrive['drive.about.get']()).resolves.toBe('response');
+      await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
     });
   });
 

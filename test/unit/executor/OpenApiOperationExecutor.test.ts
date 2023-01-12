@@ -1,7 +1,7 @@
 import type { OpenApi } from '@comake/openapi-operation-executor';
 import { OpenApiOperationExecutor as RealOpenApiOperationExecutor } from '@comake/openapi-operation-executor';
 import { OpenApiOperationExecutor } from '../../../src/operation-executor/OpenApiOperationExecutor';
-import googleDriveOpenApiSpec from '../../assets/google-drive-openapi.json';
+import ticketmasterOpenApiSpec from '../../assets/ticketmaster-openapi.json';
 
 jest.mock('@comake/openapi-operation-executor');
 
@@ -35,15 +35,15 @@ describe('An OpenApiOperationExecutor', (): void => {
   it('does not throw an error if a valid Open API spec type is supplied.', async(): Promise<void> => {
     expect((): void => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const executor = new OpenApiOperationExecutor(googleDriveOpenApiSpec as OpenApi);
+      const executor = new OpenApiOperationExecutor(ticketmasterOpenApiSpec as OpenApi);
     }).not.toThrow();
   });
 
   it('executes openapi operations.', async(): Promise<void> => {
-    const executor = new OpenApiOperationExecutor(googleDriveOpenApiSpec as OpenApi);
+    const executor = new OpenApiOperationExecutor(ticketmasterOpenApiSpec as OpenApi);
     await expect(executor.executeOperation('operationId')).resolves.toBe('response');
     expect(setOpenapiSpec).toHaveBeenCalledTimes(1);
-    expect(setOpenapiSpec).toHaveBeenCalledWith(googleDriveOpenApiSpec);
+    expect(setOpenapiSpec).toHaveBeenCalledWith(ticketmasterOpenApiSpec);
     expect(executeOperation).toHaveBeenCalledTimes(1);
     expect(executeOperation).toHaveBeenCalledWith('operationId', undefined, undefined, undefined);
   });

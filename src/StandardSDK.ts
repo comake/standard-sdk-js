@@ -1,46 +1,28 @@
-import type { OpenApi } from '@comake/openapi-operation-executor';
 import type { SkqlOptions } from '@comake/skql-js-engine';
 import { Skql } from '@comake/skql-js-engine';
-import type { AxiosResponse } from 'axios';
 import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
 import type { OperationExecutor } from './operation-executor/OperationExecutor';
+import type {
+  ApiArgTypes,
+  ApiConfigTypes,
+  ApiOperationInterface,
+  ApiOptionTypes,
+  ApiReturnTypes,
+  ApiSpec,
+  ApiSpecs,
+  ApiSpecType,
+  OperationHandler,
+} from './Types';
 
-export type ApiSpecType = 'openapi';
-
-export type ApiSpecValue<T extends ApiSpecType> = T extends 'openapi'
-  ? string | OpenApi
-  : never;
-
-export interface ApiSpec<T extends ApiSpecType> {
-  type: T;
-  value: ApiSpecValue<T>;
-}
-
-export type ApiSpecs = Record<string, ApiSpec<any>>;
-
-export interface ApiReturnTypes {
-  openapi: AxiosResponse;
-}
-
-export type ApiReturnType<T extends ApiSpecType> = ApiReturnTypes[T];
-
-export type OperationHandler<T> = (
-  args?: any,
-  configuration?: any,
-  options?: any
-) => Promise<T>;
-
-export type ApiOperationInterface<T> = Record<string, OperationHandler<T>>;
-
-export interface StandardSdkArgs {
-  apiSpecs?: ApiSpecs;
+export interface StandardSdkArgs<T extends ApiSpecs> {
+  apiSpecs?: T;
   skqlOptions?: SkqlOptions;
 }
 
-class StandardSDKBase<TU extends StandardSdkArgs> {
+class StandardSDKBase<T extends ApiSpecs> {
   private readonly _skql?: Skql;
 
-  public constructor(args: TU) {
+  public constructor(args: StandardSdkArgs<T>) {
     if (args.apiSpecs) {
       const apiOperationInterfaces = this.createApiOperationHandlers(args.apiSpecs);
       Object.assign(this, apiOperationInterfaces);
@@ -58,43 +40,56 @@ class StandardSDKBase<TU extends StandardSdkArgs> {
     throw new Error('Failed to access skql. No `skqlOptions` found on initialization of StandardSDK.');
   }
 
-  private createApiOperationHandlers<T extends ApiSpecs>(apiSpecs: T): Record<keyof T, ApiOperationInterface<any>> {
+  private createApiOperationHandlers<TS extends ApiSpecs>(
+    apiSpecs: TS,
+  ): Record<keyof TS, ApiOperationInterface<any, any, any, any>> {
     return Object.entries(apiSpecs)
       .reduce(<TR extends ApiSpecType>(
-        obj: Record<keyof T, ApiOperationInterface<any>>,
+        obj: Record<keyof TS, ApiOperationInterface<any, any, any, any>>,
         [ apiSpecName, specObject ]: [string, ApiSpec<TR>],
-      ): Record<keyof T, ApiOperationInterface<any>> => {
+      ): Record<keyof TS, ApiOperationInterface<any, any, any, any>> => {
         const executor = this.generateExecutorForApiSpec(specObject);
         const operationHandler = this.buildOperationHandlerForApiSpec(executor);
         return {
           ...obj,
           [apiSpecName]: new Proxy(
-            {} as ApiOperationInterface<ApiReturnType<TR>>,
+            {} as ApiOperationInterface<ApiReturnTypes[TR], ApiArgTypes[TR], ApiConfigTypes[TR], ApiOptionTypes[TR]>,
             { get: operationHandler },
           ),
         };
       // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
-      }, {} as Record<keyof T, ApiOperationInterface<any>>);
+      }, {} as Record<keyof TS, ApiOperationInterface<any, any, any, any>>);
   }
 
-  private generateExecutorForApiSpec<T extends ApiSpecType>(
-    apiSpec: ApiSpec<T>,
-  ): OperationExecutor<ApiReturnType<T>> {
+  private generateExecutorForApiSpec<TR extends ApiSpecType>(
+    apiSpec: ApiSpec<TR>,
+  ): OperationExecutor<ApiReturnTypes[TR], ApiArgTypes[TR], ApiConfigTypes[TR], ApiOptionTypes[TR]> {
     if (apiSpec.type === 'openapi') {
       return new OpenApiOperationExecutor(apiSpec.value);
     }
     throw new Error(`API Specification type ${apiSpec.type} is not supported.`);
   }
 
-  private buildOperationHandlerForApiSpec<T>(
-    executor: OperationExecutor<T>,
-  ): (target: ApiOperationInterface<T>, operation: string) => OperationHandler<T> {
-    return (target: ApiOperationInterface<T>, operation: string): OperationHandler<T> =>
+  private buildOperationHandlerForApiSpec<
+    TReturn,
+    TArgs extends Record<string, any>,
+    TConfig extends Record<string, any>,
+    TOptions extends Record<string, any>
+  >(
+    executor: OperationExecutor<TReturn, TArgs, TConfig, TOptions>,
+  ): (
+      target: ApiOperationInterface<TReturn, TArgs, TConfig, TOptions>,
+      operation: string,
+    ) => OperationHandler<TReturn, TArgs, TConfig, TOptions> {
+    return (
+      target: ApiOperationInterface<TReturn, TArgs, TConfig, TOptions>,
+      operation: string,
+    ): OperationHandler<TReturn, TArgs, TConfig, TOptions> =>
       async(
-        configuration: any,
-        args?: any,
-        options?: any,
-      ): Promise<T> =>
+        args?: TArgs,
+        configuration?: TConfig,
+        options?: TOptions,
+      ): Promise<TReturn> =>
         await executor.executeOperation(
           operation,
           args,
@@ -104,11 +99,20 @@ class StandardSDKBase<TU extends StandardSdkArgs> {
   }
 }
 
+type NamespacedApiOperationInterface<T extends ApiSpecs> = {
+  [key in keyof T]: ApiOperationInterface<
+    ApiReturnTypes[T[key]['type']],
+    ApiArgTypes[T[key]['type']],
+    ApiConfigTypes[T[key]['type']],
+    ApiOptionTypes[T[key]['type']]
+  >
+};
+
+export type StandardSDK<T extends ApiSpecs> = StandardSDKBase<T> & NamespacedApiOperationInterface<T>;
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const StandardSDK = {
-  build<T extends typeof StandardSDKBase, TU extends StandardSdkArgs>(
-    args: TU,
-  ): InstanceType<T> & Record<keyof TU['apiSpecs'], ApiOperationInterface<any>> {
-    return new StandardSDKBase(args) as InstanceType<T> & Record<keyof TU['apiSpecs'], ApiOperationInterface<any>>;
+  build<T extends ApiSpecs>(args: StandardSdkArgs<T>): StandardSDK<T> {
+    return new StandardSDKBase(args) as StandardSDK<T>;
   },
 };

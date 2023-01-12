@@ -3,7 +3,8 @@ import { OpenApiOperationExecutor as RealOpenApiOperationExecutor } from '@comak
 import type { AxiosResponse, AxiosRequestConfig } from 'axios';
 import type { OperationExecutor } from './OperationExecutor';
 
-export class OpenApiOperationExecutor implements OperationExecutor<AxiosResponse> {
+export class OpenApiOperationExecutor
+implements OperationExecutor<AxiosResponse, any, OpenApiClientConfiguration, AxiosRequestConfig> {
   private initialized = false;
   private readonly executor: RealOpenApiOperationExecutor;
 
@@ -21,8 +22,7 @@ export class OpenApiOperationExecutor implements OperationExecutor<AxiosResponse
       } catch {
         // Do nothing
       }
-    }
-    if (typeof apiSpec === 'object' && 'openapi' in apiSpec) {
+    } else if (typeof apiSpec === 'object' && 'openapi' in apiSpec) {
       return apiSpec;
     }
     throw new Error('Invalid OpenApi specification.');
