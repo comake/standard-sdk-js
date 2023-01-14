@@ -1,18 +1,50 @@
 import type { OpenApi, OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 
+export type JSONPrimitive =
+  | string
+  | number
+  | boolean
+  | null;
+export type JSONObject = Record<string, JSONValue>;
+export interface JSONArray extends Array<JSONValue> {}
+
+export type JSONValue =
+  | JSONPrimitive
+  // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+  | {[x: string]: JSONValue }
+  | JSONValue[];
+
 export type ApiSpecType = 'openapi';
 
-export type ApiSpecValue<T extends ApiSpecType> = T extends 'openapi'
-  ? string | OpenApi
-  : never;
-
-export interface ApiSpec<T extends ApiSpecType> {
-  type: T;
-  value: ApiSpecValue<T>;
+export interface BaseApiSpecOptions {
+  /**
+  * API specification type. This value is required.
+  */
+  readonly type: ApiSpecType;
+  /**
+  * The contents of the API specification. Usually a string or JSON object.
+  * Note: we use a Record with unknown values to support the OpenApi
+  * type as defined in \@comake/openapi-operation-executor
+  */
+  readonly value: string | Record<string, unknown>;
 }
 
-export type ApiSpecs = Record<string, ApiSpec<ApiSpecType>>;
+export interface OpenApiSpecOptions extends BaseApiSpecOptions {
+  /**
+  * API specification type.
+  */
+  readonly type: 'openapi';
+  /**
+  * Contents of the OpenAPI specification.
+  * Either an OpenApi conformant JSON object, or a stringified representation of one.
+  */
+  readonly value: string | OpenApi;
+}
+
+export type ApiSpecOptions = OpenApiSpecOptions;
+
+export type ApiSpecs = Record<string, ApiSpecOptions>;
 
 export interface ApiReturnTypes {
   openapi: AxiosResponse;
@@ -30,11 +62,10 @@ export interface ApiOptionTypes {
   openapi: AxiosRequestConfig;
 }
 
-export type OperationHandler<TReturn, TArgs, TConfig, TOptions> = (
-  args?: TArgs,
-  configuration?: TConfig,
-  options?: TOptions
-) => Promise<TReturn>;
+export type OperationHandler<T extends ApiSpecType> = (
+  args?: ApiArgTypes[T],
+  configuration?: ApiConfigTypes[T],
+  options?: ApiOptionTypes[T]
+) => Promise<ApiReturnTypes[T]>;
 
-export type ApiOperationInterface<TReturn, TArgs, TConfig, TOptions> =
-  Record<string, OperationHandler<TReturn, TArgs, TConfig, TOptions>>;
+export type ApiOperationNamespace<T extends ApiSpecType> = Record<string, OperationHandler<T>>;

@@ -1,8 +1,10 @@
-export interface OperationExecutor<
-  TReturn,
-  TArgs extends Record<string, any>,
-  TConfig extends Record<string, any>,
-  TOptions extends Record<string, any>
-> {
-  executeOperation: (operation: string, args?: TArgs, configuration?: TConfig, options?: TOptions) => Promise<TReturn>;
+import type { ApiArgTypes, ApiConfigTypes, ApiOptionTypes, ApiReturnTypes, ApiSpecType } from '../Types';
+
+export interface OperationExecutor<T extends ApiSpecType> {
+  executeOperation: (
+    operation: string,
+    args?: ApiArgTypes[T],
+    configuration?: ApiConfigTypes[T],
+    options?: ApiOptionTypes[T]
+  ) => Promise<ApiReturnTypes[T]>;
 }

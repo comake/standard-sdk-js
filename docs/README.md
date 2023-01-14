@@ -1,8 +1,8 @@
 # Introduction
 
-Standard SDK is an open source software package that provides you with a single [SDK](https://en.wikipedia.org/wiki/Software\_development\_kit) to integrate and interact with any API. It vastly simplifies developer experience when building applications, especially ones which require lots of interaction with external APIs.
+Standard SDK is an open source software package that provides you with a single [SDK](https://en.wikipedia.org/wiki/Software\_development\_kit) to integrate and interact with any API. It vastly simplifies developer experience when building applications, especially ones which require interaction with multiple external APIs.
 
-Developers commonly spent lots of time installing SDKs, reading documentation, and figuring out how to use each SDK to build integrations using APIs and add features to their application (eg. the [Google API Node Client](https://www.npmjs.com/package/googleapis), the [Node Slack SDK](https://slack.dev/node-slack-sdk/), etc.). Instead of going through this time consuming process installing and learning many different SDKs, a developer can just install Standard SDK to build any integration their application requires. In addition to saving time, removing dependencies on all those SDKs in favor of just one can reduce your application's build size, and make it easier to onboard developers to your codebase.
+Developers commonly spent lots of time installing SDKs, reading documentation, and figuring out how to use each SDK to build integrations using APIs and to add features to their application (eg. the [Google API Node Client](https://www.npmjs.com/package/googleapis), the [Node Slack SDK](https://slack.dev/node-slack-sdk/), etc.). Instead of going through this time consuming process installing and learning many different SDKs, a developer can just install Standard SDK to build any integration their application requires. In addition to saving time, removing dependencies on all those SDKs in favor of just one can reduce your application's build size, and make it easier to onboard developers to your codebase.
 
 ### How it works
 
@@ -28,4 +28,4 @@ Although Standard SDK makes it easier to send properly formatted web requests to
 
 Standard Knowledge Language (SKL) defines a protocol for interacting with non-standard data formats and APIs through standard abstractions of data and capabilities. If you haven't already, you may want to read the [Standard Knowledge Language Overview](https://docs.standardknowledge.com/) before moving ahead.
 
-SKL enables developers to use abstractions such as an ontology or common models to facilitate interactions with multiple similar APIs. In other words, rather than having to write custom code for each API, a developer using a Standard SDK can build over a common model that can then interact with multiple APIs. See [Getting Started With SKL](get-started/getting-started-with-skl.md) to learn more.
+SKL enables developers to use abstractions such as an ontology or common models to facilitate interactions with multiple similar APIs. Rather than having to write custom code for each API, a developer using a Standard SDK can build over a common model that can then interact with multiple APIs. See [Getting Started With SKL](get-started/getting-started-with-skl.md) to learn more.
