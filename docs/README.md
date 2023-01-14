@@ -16,9 +16,8 @@ Standard SDK is powered by open source standardized API specifications like [Ope
 
 There are multiple ways to provide API specifications to Standard SDK:
 
-1. As a file path (either a single file or a folder holding multiple API specifications)
-2. As a variable (string or json object)
-3. From a [Standard Knowledge Language](https://docs.standardknowledge.com/) (SKL) schema source
+1. As a variable (a string or json object)
+2. From a [Standard Knowledge Language](https://docs.standardknowledge.com/) (SKL) schema source
 
 To start building integrations using Standard SDK now, see [Quick Start](get-started/quick-start.md). Alternatively, read on to learn about how Standard SDK and Standard Knowledge Language can be used in combination to integrate with capabilities and data types across many APIs.
 
