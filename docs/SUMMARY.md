@@ -14,5 +14,5 @@
 
 ## Other
 
-* [Contributing](other/contributing.md)
-* [License](other/license.md)
+* [Contributing](../CONTRIBUTING.md)
+* [License](../LICENSE.md)
