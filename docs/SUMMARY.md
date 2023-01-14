@@ -10,7 +10,6 @@
 ## Reference
 
 * [API Reference](reference/api-reference.md)
-* [Terminology](reference/terminology.md)
 
 ## Other
 

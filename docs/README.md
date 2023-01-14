@@ -14,7 +14,7 @@ Standard SDK is powered by open source standardized API specifications like [Ope
 * (Coming soon) [AsyncAPI](https://www.asyncapi.com/) for Asynchronous/Event Driven APIs [Upvote the Issue](https://github.com/comake/standard-sdk-js/issues/7)
 * (Longer term roadmap) SQL Interfaces
 
-There are multiple ways to provide API specifications to Standard SDK:
+There are two ways to provide API specifications to Standard SDK:
 
 1. As a variable (a string or json object)
 2. From a [Standard Knowledge Language](https://docs.standardknowledge.com/) (SKL) schema source
