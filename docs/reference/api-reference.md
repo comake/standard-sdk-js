@@ -8,7 +8,7 @@ The `build` method of the top level `StandardSDK` object instantiates a Standard
 
 The `build` method takes one argument which may have either or both of `apiSpecs` and `skqlOptions`.
 
-| Parameter | Type | Required | Description |
+| Parameter | Type | Required | Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
 | :--- | :--- | :--- | :--- |
 | `apiSpecs` | `object` |  | A hash of `ApiSpecOptions` objects. Describes the API specs for StandardSDK to construct namespaced operations from. |
 | `skqlOptions` | `object` |  | An `SkqlOptions` object as defined by [@comake/skql-js-engine](https://www.npmjs.com/package/@comake/skql-js-engine) |
@@ -58,7 +58,7 @@ Executes the API operation called `<operation>` according to the API specificati
 
 #### Parameters
 
-| Parameter | Type | Required | Description |
+| Parameter | Type | Required | Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
 | :--- | :--- | :--- | :--- |
 | `args` | `object` |  | Arguments for the operation as defined by the API specification. For example, an operation in an OpenAPI spec has either a `requestBody` or a `parameters` field. StandardSDK will read these fields and construct and send a web request with the data from `args` in the correct parts of the request. |
 | `configuration` | `object` |  | An object holding any configuration necessary for the operation. Most often this includes security credentials. For example, for an OpenAPI operation `configuration` may include an `apiKey` or `accessToken` to satisfy the [Security Requirement](https://spec.openapis.org/oas/v3.1.0#securityRequirementObject) of the operation. See note below for more information. |
