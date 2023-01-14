@@ -1,16 +1,16 @@
 import type { OpenApi, OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import { OpenApiOperationExecutor as RealOpenApiOperationExecutor } from '@comake/openapi-operation-executor';
 import type { AxiosResponse, AxiosRequestConfig } from 'axios';
+import type { OpenApiSpecOptions } from '../Types';
 import type { OperationExecutor } from './OperationExecutor';
 
-export class OpenApiOperationExecutor
-implements OperationExecutor<AxiosResponse, any, OpenApiClientConfiguration, AxiosRequestConfig> {
+export class OpenApiOperationExecutor implements OperationExecutor<'openapi'> {
   private initialized = false;
   private readonly executor: RealOpenApiOperationExecutor;
 
-  public constructor(openApiSpec: string | OpenApi) {
+  public constructor(openApiSpecOptions: OpenApiSpecOptions) {
     this.executor = new RealOpenApiOperationExecutor();
-    const openApiSpecObject = this.processOpenApiSpec(openApiSpec);
+    const openApiSpecObject = this.processOpenApiSpec(openApiSpecOptions.value);
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.setOpenApiSpec(openApiSpecObject);
   }
