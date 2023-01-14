@@ -29,7 +29,7 @@ A `StandardSDK` instance with a namespace for each key in `apiSpecs`, if supplie
 #### Example Usage
 
 In Typescript:
-```ts
+```typescript
 import ticketmasterOpenApiSpec from './path/to/ticketmaster-openapi-spec.json';
 
 const standardSdk = StandardSDK.build({
@@ -48,7 +48,7 @@ A namespace of a `StandardSDK` instance corresponding to a set of supplied Api S
 
 #### Example Usage
 In Typescript:
-```ts
+```typescript
 const sdkNamespace = standardSdk.ticketmaster;
 ```
 
@@ -75,7 +75,7 @@ Operations return [`Promises`](https://developer.mozilla.org/en-US/docs/Web/Java
 #### Example Usage
 
 In Typescript:
-```ts
+```typescript
 const axiosResponse = await standardSdk.ticketmaster.SearchEvents(
   { city: 'Atlanta' }, // args
   { apiKey: '<your ticketmaster api key>' }, // configuration

@@ -21,7 +21,7 @@ To use Standard SDK in a browser, you'll need to use a bundling tool such as Web
 To use Standard SDK, it first needs to be built using the [StandardSDK.build](../reference/api-reference.md#standardsdkbuildoptions) method. StandardSDK is dynamically built based on the API specs you supply.
 
 In Typescript:
-```ts
+```typescript
 import { StandardSDK } from '@comake/standard-sdk-js';
 
 // Import your API specs. 
@@ -47,7 +47,7 @@ Here we use OpenAPI specs imported as a JSON modules (requires the resolveJsonMo
 Once you have built a `StandardSDK` object, you can perform API operations with it according to the descriptions of operations in the API specs you supplied. For example, every operation in an OpenAPI spec has a unique field used to identify it, called an `operationId`. Every `operationId` in an OpenAPI spec can be used as the name of a function which can be called to execute the corresponding API request described by the API spec. The operations available to perform are namespaced with the same keys you use in the `apiSpecs` parameter when you build StandardSDK (eg. ticketmaster and dropbox from the example above).
 
 In Typescript:
-```ts
+```typescript
 const ticketMasterResponse = await standardSdk.ticketmaster.SearchEvents(
   { city: 'Atlanta' },
   { apiKey: '<your ticketmaster api key>' },
