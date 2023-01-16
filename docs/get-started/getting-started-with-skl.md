@@ -46,15 +46,41 @@ In order to use SKL for our application, we need to create Schemas representing:
 2. An abstraction of the operation we want to perform with the API of each event ticketing platform. We want to get a list of events from each platform, filtered by only those in our town. We'll call this `getEvents`, it is a [Verb](https://docs.standardknowledge.com/fundamentals#verbs).
 3. Rules defining how our Verb `getEvents` and its standardized parameters get mapped to the correct operation of each API and how the unique response of each API gets mapped into the standardized return value of the Verb. These are [Mappings](https://docs.standardknowledge.com/fundamentals#mappings).
 
-Implementations of these Schemas are available as JSON-LD in the ___ of the StandardSDK examples repo. There you'll see the Event Noun in the [nouns.json]() file, the `getEvents` Verb in the [verbs.json]() file, and the mappings in the [mappings.json]() file.
+Examples of these Schemas for Ticketmaster are available as JSON-LD in the [ticketmaster-openapi-spec/assets](https://github.com/comake/skl-examples/tree/main/standard-sdk-js/ticketmaster-using-skl/assets) folder of the [SKL Examples](https://github.com/comake/skl-examples) repository. There you'll see the Event Noun in the [nouns.json](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/nouns.json) file, the `getEvents` Verb in the [verbs.json](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/verbs.json) file, and the mappings in the [mappings.json](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/mappings.json) file.
+
+### API Security Credentials
+
+Most APIs require a sensitive access token or API key to make authenticated requests. SKL automatically reads these from a `Security Credentials` entity in your schemas. You can see an example of one for our Ticketmaster example in [entities.json](https://github.com/comake/skl-examples/blob/f7511fdccea7d07516adf09b083c9af98abfa8eb/standard-sdk-js/ticketmaster-using-skl/assets/entities.json#L30-L33). You'll notice that the `apiKey` field is stubbed out with `ENV_TICKETMASTER_APIKEY`. This is because we don't want to put a real API key in the public repository on github. When the example code is run, we swap out this stubbed value with a value set via an environment variable. Our example code swaps out any environment variable stub starting with the prefix `ENV_` with the value of the environment variable named the remainder of the stub, in this case `TICKETMASTER_APIKEY`.
+
 
 ## 2. Use a SKQL Engine
 
-TODO
+Now that we have schemas, we need to use an [SKQL Engine](https://docs.standardknowledge.com/get-started/engine) to read and execute them according to our code. Standard SDK JS includes the [SKQL JS Engine](https://github.com/comake/skql-js-engine) inside of it. This way, with only one dependency, you can use Standard SDK normally when creating abstractions is too hard for your circumstance or use case but have the power of SKL's abstractions to solve the majority of your needs.
+
+Build Standard SDK using the `skqlOptions` argument. This argument is the same interface as the arguments to build [SKQL JS Engine](https://github.com/comake/skql-js-engine).
+
+In Typescript:
+```typescript
+const standardSdk = StandardSDK.build({
+  skqlOptions: {
+    type: 'memory',
+    schemas: <yourSchemasHere>,
+  },
+});
+```
+If your schemas are separated across multiple files and/or use a JSON-LD `@context`, you should frame them using a function like [`frameAndCombineSchemas`](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/src/Util.ts#L5) in the [SKL Examples](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/src/Util.ts#L5) repository.
 
 ## 3. Write Code
 
-TODO
+Finally, you're ready to write some code using the Standard SDK instance you just built. Since we provided `skqlOptions` you can access the SKQL JS Engine through `standardSdk.skql`.
 
-<!-- standardSDK.skql.do.getEvents(); -->
+In Typescript:
+```typescript
+const response = await standardSdk.skql.do.getEvents({
+  account: 'https://example.com/data/TicketmasterAccount',
+  city: 'New York',
+});
+```
+
+This code will tell the SKQL JS Engine to execute the `getEvents` Verb using the Ticketmaster account represented by the URI `https://example.com/data/TicketmasterAccount`. In [entities.json](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/entities.json), which you copied or reviewed earlier, there are Schemas which contain the [Ticketmaster OpenAPI specification](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/entities.json#L42) and a [Ticketmaster API key](https://github.com/comake/skl-examples/blob/f7511fdccea7d07516adf09b083c9af98abfa8eb/standard-sdk-js/ticketmaster-using-skl/assets/entities.json#L30). In [mappings.json](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/mappings.json), there is a mapping which relates the [Ticketmaster Integration](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/mappings.json#L38) with the [getEvents Verb](https://github.com/comake/skl-examples/blob/main/standard-sdk-js/ticketmaster-using-skl/assets/mappings.json#L39). Together, these entities and mappings inform the SKQL JS Engine how to map the parameters of the `getEvents` Verb to the parameters of the Ticketmaster API, send a properly formatted web request to the Ticketmaster API, and map the response of the API into a standard abstraction of Events.
 
