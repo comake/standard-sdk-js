@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/comake/standard-sdk-js">
-    <img src="./resources/standard-sdk-js.png" width="150" height="150">
+    <img src="./resources/standard-sdk.svg" width="150" height="150">
   </a>
   <br/>
   <br/>
