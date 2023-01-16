@@ -6,7 +6,7 @@
   <br/>
   <h2>Standard SDK JS</h2>
   <p>
-    <a href="https://comake-1.gitbook.io/standard-sdk-js/"><strong>Documentation</strong></a>
+    <a href="https://comake-1.gitbook.io/standard-sdk/"><strong>Documentation</strong></a>
   </p>
   <p>
     <a href="https://badge.fury.io/js/@comake%2Fstandard-sdk-js">
