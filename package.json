@@ -52,6 +52,9 @@
       "@commitlint/config-conventional"
     ]
   },
+  "files": [
+		"dist"
+	],
   "dependencies": {
     "@comake/openapi-operation-executor": "^0.5.1",
     "@comake/skql-js-engine": "^0.13.1",
