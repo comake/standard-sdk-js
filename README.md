@@ -1,6 +1,30 @@
-# Standard SDK JS
+<div align="center">
+  <a href="https://github.com/comake/standard-sdk-js">
+    <img src="./resources/standard-sdk-js.png" width="150" height="150">
+  </a>
+  <br/>
+  <br/>
+  <h2>Standard SDK JS</h2>
+  <p>
+    <a href="https://comake-1.gitbook.io/standard-sdk-js/"><strong>Documentation</strong></a>
+  </p>
+  <p>
+    <a href="https://badge.fury.io/js/@comake%2Fstandard-sdk-js">
+      <img src="https://badge.fury.io/js/@comake%2Fstandard-sdk-js.svg" alt="npm version" height="18">
+    </a>
+    <a href="https://github.com/comake/standard-sdk-js/actions/workflows/ci.yml">
+      <img src="https://github.com/comake/standard-sdk-js/actions/workflows/ci.yml/badge.svg">
+    </a>
+    <a href="https://opensource.org/licenses/MIT">
+      <img src="https://img.shields.io/badge/License-MIT-yellow.svg">
+    </a>
+  </p>
+  <br>
+  <br>
+</div>
 
-[![npm version](https://badge.fury.io/js/@comake%2Fstandard-sdk-js.svg)](https://badge.fury.io/js/@comake%2Fstandard-sdk-js) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+---
+<br/>
 
 Standard SDK is an open source software package that provides you with a single [SDK](https://en.wikipedia.org/wiki/Software\_development\_kit) to integrate and interact with any API. It vastly simplifies developer experience when building applications, especially ones which require interaction with multiple external APIs.
 
