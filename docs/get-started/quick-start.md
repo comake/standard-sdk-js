@@ -42,13 +42,13 @@ const standardSdk = StandardSDK.build({
   },
 });
 ```
-Here we use OpenAPI specs imported as a JSON modules (requires the resolveJsonModule flag in your `tsconfig.json` file in Typescript). Alternatively, you could read a YAML file uing [fs](https://nodejs.org/api/fs.html#file-system) and use the [yaml](https://www.npmjs.com/package/yaml) npm module to convert to JSON.
+Here we use OpenAPI specs imported as a JSON modules (requires the `resolveJsonModule` flag in your `tsconfig.json` file in Typescript). Alternatively, you could read a YAML file uing [fs](https://nodejs.org/api/fs.html#file-system) and use the [yaml](https://www.npmjs.com/package/yaml) npm module to convert to JSON.
 
-Once you have built a `StandardSDK` object, you can perform API operations with it according to the descriptions of operations in the API specs you supplied. For example, every operation in an OpenAPI spec has a unique field used to identify it, called an `operationId`. Every `operationId` in an OpenAPI spec can be used as the name of a function which can be called to execute the corresponding API request described by the API spec. The operations available to perform are namespaced with the same keys you use in the `apiSpecs` parameter when you build StandardSDK (eg. ticketmaster and dropbox from the example above).
+Once you have built a `StandardSDK` object, you can perform API operations with it according to the descriptions of operations in the API specs you supplied. For example, every operation in an OpenAPI spec has a unique field used to identify it, called an `operationId`. Every `operationId` in an OpenAPI spec can be used as the name of a function which can be called to execute the corresponding API request described by the API spec. The operations available to perform are namespaced with the same keys you use in the `apiSpecs` parameter when you build StandardSDK (eg. `ticketmaster` and `dropbox` in the example above).
 
 In Typescript:
 ```typescript
-const ticketMasterResponse = await standardSdk.ticketmaster.SearchEvents(
+const ticketmasterResponse = await standardSdk.ticketmaster.SearchEvents(
   { city: 'Atlanta' },
   { apiKey: '<your ticketmaster api key>' },
 );
@@ -60,5 +60,5 @@ const dropboxResponse = await standardSdk.dropbox.FilesGetMetadata(
 ```
 The ticketmaster OpenAPI spec we provided describes an operation with `operationId` equal to `SearchEvents`. The operation in the spec describes the Event Search endpoint documented in [Ticketmaster's Discovery API documentation](https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/#search-events-v2). Similarly, the Dropbox OpenAPI spec we provided describes an operation with `operationId` equal to `FilesGetMetadata`. It is documented in [Dropbox's API documentation](https://www.dropbox.com/developers/documentation/http/documentation#files-get_metadata).
 
-Each operation was supplied relevant arguments as the first parameter and applicable configuration as the second. See the [standardSDKInstance.\<namespace\>.\<operation\>](../reference/api-reference.md#standardsdkinstancenamespaceoperationargs-configuration-options) api reference for more information on these parameters.
+Each operation was supplied relevant arguments as the first parameter and configuration as the second. See the [standardSDKInstance.\<namespace\>.\<operation\>](../reference/api-reference.md#standardsdkinstancenamespaceoperationargs-configuration-options) api reference for more information on these parameters.
 
