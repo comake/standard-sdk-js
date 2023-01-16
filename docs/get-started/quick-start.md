@@ -58,7 +58,7 @@ const dropboxResponse = await standardSdk.dropbox.FilesGetMetadata(
   { accessToken: '<your dropbox access token>' },
 );
 ```
-The ticketmaster OpenAPI spec we supplied to Standard SDK describes an operation with `operationId` equal to `SearchEvents`. The operation in the spec describes the Event Search endpoint documented in [Ticketmaster's Discovery API documentation](https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/#search-events-v2). Similarly, the Dropbox OpenAPI spec we provided describes an operation with `operationId` equal to `FilesGetMetadata`. It is documented in [Dropbox's API documentation](https://www.dropbox.com/developers/documentation/http/documentation#files-get_metadata).
+The Ticketmaster OpenAPI spec we supplied to Standard SDK describes an operation with `operationId` equal to `SearchEvents`. The operation in the spec describes the Event Search endpoint documented in [Ticketmaster's Discovery API documentation](https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/#search-events-v2). Similarly, the Dropbox OpenAPI spec we provided describes an operation with `operationId` equal to `FilesGetMetadata`. It is documented in [Dropbox's API documentation](https://www.dropbox.com/developers/documentation/http/documentation#files-get_metadata).
 
 Each operation was supplied relevant arguments as the first parameter and configuration as the second. See the [standardSDKInstance.\<namespace\>.\<operation\>](../reference/api-reference.md#standardsdkinstancenamespaceoperationargs-configuration-options) api reference for more information on these parameters.
 
