@@ -1,4 +1,4 @@
-import type { OpenApi, OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
+import type { OpenApi, OpenApiClientConfiguration, Operation, PathItem } from '@comake/openapi-operation-executor';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export type JSONPrimitive =
@@ -62,10 +62,31 @@ export interface ApiOptionTypes {
   openapi: AxiosRequestConfig;
 }
 
+export type OpenApiOperationType = 'get' | 'post' | 'patch' | 'put' | 'delete' | 'options' | 'head' | 'trace';
+
+export type OperationIdsOfPathItem<T extends PathItem> = {
+  [key in keyof T & OpenApiOperationType]: T[key] extends Operation
+    ? T[key]['operationId']
+    : string
+}[keyof T & OpenApiOperationType];
+
+export type OperationIdsOfOpenApi<T extends OpenApi> = {
+  [key in keyof T['paths']]: Exclude<OperationIdsOfPathItem<T['paths'][key]>, undefined>
+}[keyof T['paths']];
+
+export type OpenApiOperationInterface<T extends OpenApi> =
+  Record<OperationIdsOfOpenApi<T>, OperationHandler<'openapi'>>;
+
+export type NonTypedOpenApiOperationInterface = Record<string, OperationHandler<'openapi'>>;
+
+export interface ApiOperaionNamespaces<TS> {
+  openapi: TS extends OpenApi ? OpenApiOperationInterface<TS> : NonTypedOpenApiOperationInterface;
+}
+
 export type OperationHandler<T extends ApiSpecType> = (
   args?: ApiArgTypes[T],
   configuration?: ApiConfigTypes[T],
   options?: ApiOptionTypes[T]
 ) => Promise<ApiReturnTypes[T]>;
 
-export type ApiOperationNamespace<T extends ApiSpecType> = Record<string, OperationHandler<T>>;
+export type ApiOperationNamespace<T extends ApiSpecType, TS> = ApiOperaionNamespaces<TS>[T];

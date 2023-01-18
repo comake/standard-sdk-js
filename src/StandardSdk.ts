@@ -47,23 +47,23 @@ class StandardSDKBase<T extends ApiSpecs> {
 
   private createApiOperationNamespaces<TS extends ApiSpecs>(
     apiSpecs: TS,
-  ): Record<keyof TS, ApiOperationNamespace<ApiSpecType>> {
+  ): Record<keyof TS, ApiOperationNamespace<ApiSpecType, any>> {
     return Object.entries(apiSpecs)
       .reduce(<TR extends ApiSpecOptions>(
-        obj: Record<keyof TS, ApiOperationNamespace<ApiSpecType>>,
+        obj: Record<keyof TS, ApiOperationNamespace<ApiSpecType, any>>,
         [ apiSpecName, specObject ]: [string, TR],
-      ): Record<keyof TS, ApiOperationNamespace<ApiSpecType>> => {
+      ): Record<keyof TS, ApiOperationNamespace<ApiSpecType, any>> => {
         const executor = this.generateExecutorForApiSpecOptions(specObject);
         const operationHandler = this.buildOperationHandlerForApiSpec(executor);
         return {
           ...obj,
           [apiSpecName]: new Proxy(
-            {} as ApiOperationNamespace<TR['type']>,
+            {} as ApiOperationNamespace<TR['type'], TR['value']>,
             { get: operationHandler },
           ),
         };
       // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
-      }, {} as Record<keyof TS, ApiOperationNamespace<any>>);
+      }, {} as Record<keyof TS, ApiOperationNamespace<any, any>>);
   }
 
   private generateExecutorForApiSpecOptions<TR extends ApiSpecOptions>(
@@ -78,11 +78,11 @@ class StandardSDKBase<T extends ApiSpecs> {
   private buildOperationHandlerForApiSpec<TR extends ApiSpecType>(
     executor: OperationExecutor<TR>,
   ): (
-      target: ApiOperationNamespace<TR>,
+      target: ApiOperationNamespace<TR, any>,
       operation: string,
     ) => OperationHandler<TR> {
     return (
-      target: ApiOperationNamespace<TR>,
+      target: ApiOperationNamespace<TR, any>,
       operation: string,
     ): OperationHandler<TR> =>
       async(
@@ -100,7 +100,7 @@ class StandardSDKBase<T extends ApiSpecs> {
 }
 
 type NamespacedApiOperationNamespace<T extends ApiSpecs> = {
-  [key in keyof T]: ApiOperationNamespace<T[key]['type']>
+  [key in keyof T]: ApiOperationNamespace<T[key]['type'], T[key]['value']>
 };
 
 export type StandardSDK<T extends ApiSpecs> = StandardSDKBase<T> & NamespacedApiOperationNamespace<T>;

@@ -1,7 +1,6 @@
-import type { OpenApi } from '@comake/openapi-operation-executor';
 import { OpenApiOperationExecutor as RealOpenApiOperationExecutor } from '@comake/openapi-operation-executor';
 import { OpenApiOperationExecutor } from '../../../src/operation-executor/OpenApiOperationExecutor';
-import ticketmasterOpenApiSpec from '../../assets/ticketmaster-openapi.json';
+import ticketmasterOpenApiSpec from '../../assets/TicketmasterOpenapi';
 
 jest.mock('@comake/openapi-operation-executor');
 
@@ -40,7 +39,7 @@ describe('An OpenApiOperationExecutor', (): void => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const executor = new OpenApiOperationExecutor({
         type: 'openapi',
-        value: ticketmasterOpenApiSpec as OpenApi,
+        value: ticketmasterOpenApiSpec,
       });
     }).not.toThrow();
   });
@@ -48,7 +47,7 @@ describe('An OpenApiOperationExecutor', (): void => {
   it('executes openapi operations.', async(): Promise<void> => {
     const executor = new OpenApiOperationExecutor({
       type: 'openapi',
-      value: ticketmasterOpenApiSpec as OpenApi,
+      value: ticketmasterOpenApiSpec,
     });
     await expect(executor.executeOperation('operationId')).resolves.toBe('response');
     expect(setOpenapiSpec).toHaveBeenCalledTimes(1);

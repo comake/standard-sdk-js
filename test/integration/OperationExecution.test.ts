@@ -1,6 +1,5 @@
-import type { OpenApi } from '@comake/openapi-operation-executor';
 import { StandardSDK } from '../../src/StandardSdk';
-import ticketmasterOpenApiSpec from '../assets/ticketmaster-openapi.json';
+import ticketmasterOpenApiSpec from '../assets/TicketmasterOpenapi';
 import { describeIf } from '../util/Util';
 
 describeIf('docker', 'Operation execution', (): void => {
@@ -9,7 +8,7 @@ describeIf('docker', 'Operation execution', (): void => {
       apiSpecs: {
         ticketmaster: {
           type: 'openapi',
-          value: ticketmasterOpenApiSpec as OpenApi,
+          value: ticketmasterOpenApiSpec,
         },
       },
     });
