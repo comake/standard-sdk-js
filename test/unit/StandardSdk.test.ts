@@ -1,8 +1,7 @@
-import type { OpenApi } from '@comake/openapi-operation-executor';
 import { Skql } from '@comake/skql-js-engine';
 import { OpenApiOperationExecutor } from '../../src/operation-executor/OpenApiOperationExecutor';
 import { StandardSDK } from '../../src/StandardSdk';
-import ticketmasterOpenApiSpec from '../assets/ticketmaster-openapi.json';
+import ticketmasterOpenApiSpec from '../assets/TicketmasterOpenapi';
 
 jest.mock('../../src/operation-executor/OpenApiOperationExecutor');
 
@@ -57,7 +56,7 @@ describe('A StandardSDK', (): void => {
       apiSpecs: {
         ticketmaster: {
           type: 'openapi',
-          value: ticketmasterOpenApiSpec as OpenApi,
+          value: ticketmasterOpenApiSpec,
         },
       },
     });

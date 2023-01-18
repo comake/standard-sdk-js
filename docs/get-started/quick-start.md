@@ -18,15 +18,45 @@ To use Standard SDK in a browser, you'll need to use a bundling tool such as Web
 
 ## Usage
 
+### Building 
 To use Standard SDK, it first needs to be built using the [StandardSDK.build](../reference/api-reference.md#standardsdkbuildoptions) method. StandardSDK is dynamically built based on the API specs you supply.
 
 In Typescript:
 ```typescript
+import type { OpenApi } from '@comake/standard-sdk-js';
 import { StandardSDK } from '@comake/standard-sdk-js';
-
 // Import your API specs. 
 import ticketmasterOpenApiSpec from './path/to/ticketmaster-openapi-spec.json';
 import dropboxOpenApiSpec from './path/to/dropbox-openapi-spec.json';
+// Build the Standard SDK with your API specs of choice
+const standardSdk = StandardSDK.build({
+  apiSpecs: {
+    ticketmaster: {
+      type: 'openapi',
+      value: ticketmasterOpenApiSpec as OpenAPI,
+    },
+    dropbox: {
+      type: 'openapi',
+      value: dropboxOpenApiSpec as OpenAPI,
+    },
+  },
+});
+```
+Here we use OpenAPI specs imported as a JSON modules (requires the `resolveJsonModule` flag in your `tsconfig.json` file in Typescript). Alternatively, you could read a YAML file uing [fs](https://nodejs.org/api/fs.html#file-system) and use the [yaml](https://www.npmjs.com/package/yaml) npm module to convert to JSON.
+
+To get full Typescript autocompletion support in Standard SDK, turn your JSON OpenAPI specs into typescript objects by doing the following:
+1. Change the file extension from `.json` to `.ts`
+2. Add this typescript code around the OpenAPI spec JSON.
+    ```typescript
+    export default {
+      // Your OpenAPI spec here
+    } as const;
+    ```
+Now you won't have to cast your imported OpenAPI specs to the `OpenApi` type
+```typescript
+import { StandardSDK } from '@comake/standard-sdk-js';
+// Import your API specs as Typescript objects. 
+import ticketmasterOpenApiSpec from './path/to/ticketmaster-openapi-spec.ts';
 
 // Build the Standard SDK with your API specs of choice
 const standardSdk = StandardSDK.build({
@@ -34,16 +64,13 @@ const standardSdk = StandardSDK.build({
     ticketmaster: {
       type: 'openapi',
       value: ticketmasterOpenApiSpec,
-    },
-    dropbox: {
-      type: 'openapi',
-      value: dropboxOpenApiSpec,
-    },
+    }
   },
 });
 ```
-Here we use OpenAPI specs imported as a JSON modules (requires the `resolveJsonModule` flag in your `tsconfig.json` file in Typescript). Alternatively, you could read a YAML file uing [fs](https://nodejs.org/api/fs.html#file-system) and use the [yaml](https://www.npmjs.com/package/yaml) npm module to convert to JSON.
 
+
+### Operations
 Once you have built a `StandardSDK` object, you can perform API operations with it according to the descriptions of operations in the API specs you supplied. For example, every operation in an OpenAPI spec has a unique field used to identify it, called an `operationId`. Every `operationId` in an OpenAPI spec can be used as the name of a function which can be called to execute the corresponding API request described by the API spec. The operations available to perform are namespaced with the same keys you use in the `apiSpecs` parameter when you build StandardSDK (eg. `ticketmaster` and `dropbox` in the example above).
 
 In Typescript:
