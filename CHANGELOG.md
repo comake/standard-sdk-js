@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.0 (1-19-2023)
+
+### Features
+
+- Added Typescript typing to the `args` argument of operations in an API namespace when OpenAPI specs are provided as Javascript objects ([b3f0053](https://github.com/comake/standard-sdk-js/pull/14/commits/b3f00539269c83936b7be8472663e357911e5438))
+
 ## 1.1.0 (1-18-2023)
 
 ### Features
