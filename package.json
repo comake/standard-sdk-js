@@ -1,6 +1,6 @@
 {
   "name": "@comake/standard-sdk-js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "An open source SDK to integrate and interact with any API",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -57,7 +57,7 @@
   ],
   "dependencies": {
     "@comake/openapi-operation-executor": "^0.7.0",
-    "@comake/skql-js-engine": "^0.13.1",
+    "@comake/skql-js-engine": "^0.14.0",
     "@commitlint/cli": "^17.4.1",
     "@commitlint/config-conventional": "^17.4.0"
   },
