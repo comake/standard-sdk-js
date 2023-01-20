@@ -1,4 +1,4 @@
-import type { ApiArgTypes, ApiConfigTypes, ApiOptionTypes, ApiReturnTypes, ApiSpecType } from '../Types';
+import type { ApiArgTypes, ApiConfigTypes, ApiOptionTypes, ApiReturnTypes, ApiSpecType } from '../ApiTypes';
 
 export interface OperationExecutor<T extends ApiSpecType> {
   executeOperation: (

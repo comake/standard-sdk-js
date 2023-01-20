@@ -1,18 +1,18 @@
 import type { SkqlOptions } from '@comake/skql-js-engine';
 import { Skql } from '@comake/skql-js-engine';
-import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
-import type { OperationExecutor } from './operation-executor/OperationExecutor';
 import type {
   ApiArgTypes,
   ApiConfigTypes,
-  ApiOperationNamespace,
   ApiOptionTypes,
   ApiReturnTypes,
   ApiSpecOptions,
   ApiSpecs,
   ApiSpecType,
-  OperationHandler,
-} from './Types';
+  ApiOperationNamespace,
+} from './ApiTypes';
+import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
+import type { OperationExecutor } from './operation-executor/OperationExecutor';
+import type { OperationHandler } from './OperationHandler';
 
 export interface StandardSdkArgs<T extends ApiSpecs> {
   /**
