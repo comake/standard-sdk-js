@@ -13,7 +13,7 @@ describeIf('docker', 'Operation execution', (): void => {
       },
     });
     const response = await ssdk.ticketmaster.SearchEvents(
-      { dmaId: 220 },
+      { dmaId: '220' },
       { apiKey: process.env.TICKETMASTER_APIKEY },
     );
     expect(response.data).toBeInstanceOf(Object);

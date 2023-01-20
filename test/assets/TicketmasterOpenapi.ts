@@ -46,16 +46,7 @@ export default {
         "operationId": "SearchAttractions",
         "parameters": [
           {
-            "description": "Sorting order of the search result. Allowable Values : 'name,asc', 'name,desc', 'relevance,asc', 'relevance,desc'",
-            "example": "",
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "schema": {
-              "default": "relevance,desc",
-              "pattern": "^(name|relevance),(asc|desc)$",
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/sort"
           },
           {
             "description": "Filter attractions by classification name: name of any segment, genre, sub-genre, type, sub-type",
@@ -65,9 +56,7 @@ export default {
             "name": "classificationName",
             "required": false,
             "schema": {
-              "default": "",
-              "items": {},
-              "type": "array"
+              "$ref": "#/components/schemas/ClassificationName"
             }
           },
           {
@@ -1675,6 +1664,16 @@ export default {
   },
   "components": {
     "schemas": {
+      "Sort": {
+        "default": "relevance,desc",
+        "pattern": "^(name|relevance),(asc|desc)$",
+        "type": "string"
+      },
+      "ClassificationName": {
+        "default": "",
+        "items": {},
+        "type": "array"
+      },
       "AccessDates": {
         "type": "object",
         "description": "Event's Access Date",
@@ -3189,6 +3188,16 @@ export default {
         "in": "query",
         "name": "apikey",
         "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "sort": {
+        "description": "Sorting order of the search result. Allowable Values : 'name,asc', 'name,desc', 'relevance,asc', 'relevance,desc'",
+        "example": "",
+        "in": "query",
+        "name": "sort",
+        "required": false,
         "schema": {
           "type": "string"
         }

@@ -5,6 +5,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "noErrorTruncation": true
   },
   "include": [
     "src",

@@ -1,7 +1,7 @@
 import type { OpenApi, OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import { OpenApiOperationExecutor as RealOpenApiOperationExecutor } from '@comake/openapi-operation-executor';
 import type { AxiosResponse, AxiosRequestConfig } from 'axios';
-import type { OpenApiSpecOptions } from '../Types';
+import type { OpenApiSpecOptions } from '../openapi-types/OpenApiSpecOptions';
 import type { OperationExecutor } from './OperationExecutor';
 
 export class OpenApiOperationExecutor implements OperationExecutor<'openapi'> {
