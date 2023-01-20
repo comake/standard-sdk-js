@@ -2,7 +2,7 @@
 
 As mentioned in the [Introduction](../README.md), SKL ([Standard Knowledge Language](https://docs.standardknowledge.com/)) can be used with Standard SDK to make it easier to interact with multiple similar APIs. Instead of writing custom code for the non-standard data formats of each API you want to integrate with, SKL enables you to use abstractions to build over a common model.
 
-If you haven't already, review the [Conceptual Example](https://docs.standardknowledge.com/#conceptual-example) of why and how a developer uses SKL.
+If you haven't already, review the [Conceptual Example](https://docs.standardknowledge.com/conceptual-example) of why and how a developer uses SKL.
 
 ## Install
 
