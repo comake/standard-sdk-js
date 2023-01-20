@@ -1,6 +1,6 @@
 {
   "name": "@comake/standard-sdk-js",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "An open source SDK to integrate and interact with any API",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
