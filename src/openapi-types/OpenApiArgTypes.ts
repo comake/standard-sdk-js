@@ -47,37 +47,35 @@ type OpenApiParametersToTypes<T extends readonly (Parameter | Reference)[], TC e
   >
 >;
 
-export type ParametersOfOperationByOperationId<
+type ParametersOfOperationByOperationId<
   T extends Operation,
   TSpec extends OpenApi,
 > = T['operationId'] extends string
-  ? {
-    [key in T['operationId']]: T['parameters'] extends readonly (Parameter | Reference)[]
-      ? OpenApiParametersToTypes<T['parameters'], TSpec>
-      : Record<string, never>
-  }
+  ? T['parameters'] extends readonly (Parameter | Reference)[]
+    ? OpenApiParametersToTypes<T['parameters'], TSpec>
+    : Record<string, never>
   : Record<string, any>;
 
-export type ParametersOfPathItem<
+type ParametersOfPathItem<
   T extends PathItem,
   TOperation extends string,
   TSpec extends OpenApi,
-> = {
-  [key in keyof T & OpenApiOperationType]: T[key] extends { operationId: TOperation }
-    ? ParametersOfOperationByOperationId<T[key], TSpec>
-    : Record<string, undefined>
-}[keyof T & OpenApiOperationType];
+  TStuff = Extract<T[keyof T & OpenApiOperationType], { operationId: TOperation }>
+> = [TStuff] extends [never]
+  ? never
+  : TStuff extends Operation
+    ? ParametersOfOperationByOperationId<TStuff, TSpec>
+    : never;
 
-type ParametersOfOpenApiOperation<
+export type ParametersOfOpenApiOperation<
   T extends OpenApi,
   TOperation extends string,
 > = {
   [key in keyof T['paths']]: ParametersOfPathItem<T['paths'][key], TOperation, T>
-}[keyof T['paths']][TOperation];
+}[keyof T['paths']];
 
 export type OpenApiArgTypes<
-  TSpec extends object = object,
+  TSpec extends OpenApi,
   TOperation extends string = string,
-> = TSpec extends OpenApi
-  ? Exclude<ParametersOfOpenApiOperation<TSpec, TOperation>, undefined>
-  : any;
+  TParams = ParametersOfOpenApiOperation<TSpec, TOperation>
+> = [TParams] extends [never] ? any : TParams;

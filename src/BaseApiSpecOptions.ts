@@ -1,4 +1,4 @@
-import type { ApiSpecType } from './ApiTypes';
+import type { ApiSpecType } from './ApiSpecOptions';
 
 export interface BaseApiSpecOptions {
   /**

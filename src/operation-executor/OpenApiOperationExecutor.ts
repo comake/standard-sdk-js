@@ -4,7 +4,7 @@ import type { AxiosResponse, AxiosRequestConfig } from 'axios';
 import type { OpenApiSpecOptions } from '../openapi-types/OpenApiSpecOptions';
 import type { OperationExecutor } from './OperationExecutor';
 
-export class OpenApiOperationExecutor implements OperationExecutor<'openapi'> {
+export class OpenApiOperationExecutor implements OperationExecutor {
   private initialized = false;
   private readonly executor: RealOpenApiOperationExecutor;
 

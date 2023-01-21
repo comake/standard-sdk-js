@@ -1,15 +1,7 @@
 import type { SkqlOptions } from '@comake/skql-js-engine';
 import { Skql } from '@comake/skql-js-engine';
-import type {
-  ApiArgTypes,
-  ApiConfigTypes,
-  ApiOptionTypes,
-  ApiReturnTypes,
-  ApiSpecOptions,
-  ApiSpecs,
-  ApiSpecType,
-  ApiOperationNamespace,
-} from './ApiTypes';
+import type { ApiOperationNamespace } from './ApiOperationNamespace';
+import type { ApiSpecOptions, ApiSpecs, ApiSpecType } from './ApiSpecOptions';
 import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
 import type { OperationExecutor } from './operation-executor/OperationExecutor';
 import type { OperationHandler } from './OperationHandler';
@@ -58,7 +50,7 @@ class StandardSDKBase<T extends ApiSpecs> {
         return {
           ...obj,
           [apiSpecName]: new Proxy(
-            {} as ApiOperationNamespace<TR['type'], TR['value']>,
+            {} as ApiOperationNamespace<ApiSpecType, any>,
             { get: operationHandler },
           ),
         };
@@ -68,7 +60,7 @@ class StandardSDKBase<T extends ApiSpecs> {
 
   private generateExecutorForApiSpecOptions<TR extends ApiSpecOptions>(
     apiSpec: TR,
-  ): OperationExecutor<TR['type']> {
+  ): OperationExecutor {
     if (apiSpec.type === 'openapi') {
       return new OpenApiOperationExecutor(apiSpec);
     }
@@ -76,20 +68,20 @@ class StandardSDKBase<T extends ApiSpecs> {
   }
 
   private buildOperationHandlerForApiSpec<TR extends ApiSpecType>(
-    executor: OperationExecutor<TR>,
+    executor: OperationExecutor,
   ): (
       target: ApiOperationNamespace<TR, any>,
       operation: string,
-    ) => OperationHandler<TR> {
+    ) => OperationHandler {
     return (
       target: ApiOperationNamespace<TR, any>,
       operation: string,
-    ): OperationHandler<TR> =>
+    ): OperationHandler =>
       async(
-        args?: ApiArgTypes[TR],
-        configuration?: ApiConfigTypes[TR],
-        options?: ApiOptionTypes[TR],
-      ): Promise<ApiReturnTypes[TR]> =>
+        args?: Record<string, any>,
+        configuration?: Record<string, any>,
+        options?: Record<string, any>,
+      ): Promise<Record<string, any>> =>
         await executor.executeOperation(
           operation,
           args,
