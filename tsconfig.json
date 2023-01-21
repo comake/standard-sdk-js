@@ -5,7 +5,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "module": "node16",
   },
   "include": [
     "src",
