@@ -3,10 +3,6 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import type { OpenApiArgTypes } from './OpenApiArgTypes';
 import type { OpenApiOperationType } from './OpenApiOperationType';
 
-export type OpenApiOperationConfig = OpenApiClientConfiguration;
-export type OpenApiOperationOptions = AxiosRequestConfig;
-export type OpenApiOperationReturnType = AxiosResponse;
-
 type OperationsOfPathItem<T extends PathItem> = {
   [operationType in keyof T & OpenApiOperationType]: T[operationType] extends Operation
     ? T[operationType]['operationId']
@@ -20,15 +16,15 @@ type OperationIdsOfOpenApi<T extends OpenApi> = {
 type OpenApiOperationInterface<T extends OpenApi> = {
   [operation in OperationIdsOfOpenApi<T>]: (
     args?: OpenApiArgTypes<T, operation>,
-    configuration?: OpenApiOperationConfig,
-    options?: OpenApiOperationOptions
-  ) => Promise<OpenApiOperationReturnType>
+    configuration?: OpenApiClientConfiguration,
+    options?: AxiosRequestConfig
+  ) => Promise<AxiosResponse>
 };
 
 export type OpenApiOperationNamespace<T> = T extends OpenApi
   ? OpenApiOperationInterface<T>
   : Record<string, (
     args?: any,
-    configuration?: OpenApiOperationConfig,
-    options?: OpenApiOperationOptions
-  ) => Promise<OpenApiOperationReturnType>>;
+    configuration?: OpenApiClientConfiguration,
+    options?: AxiosRequestConfig
+  ) => Promise<AxiosResponse>>;
