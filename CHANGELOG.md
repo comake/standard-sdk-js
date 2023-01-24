@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.0 (1-24-2023)
+
+### Features
+
+- Adds properties from `requestBody` fields that are media type `application/json` to the typing of the `args` parameter of operation functions ([6016c52](https://github.com/comake/standard-sdk-js/pull/16/commits/6016c527a59532548e07e7ad4b4baae385261646))
+
 ## 1.2.0 (1-19-2023)
 
 ### Features
