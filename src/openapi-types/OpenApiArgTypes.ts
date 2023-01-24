@@ -5,6 +5,7 @@ import type {
   PathItem,
   Reference,
   JSONSchema,
+  RequestBody,
 } from '@comake/openapi-operation-executor';
 import type { FromSchema, JSONSchema7 } from 'json-schema-to-ts';
 import type { DeepGet } from '../type-utils/DeepGet';
@@ -26,11 +27,6 @@ type ParseReference<
   TR extends string[] = Split<TRef, '#'>,
 > = DeepGet<TSc, Tail<Split<TR[1], '/'>>, false>;
 
-type OpenApiRefToType<T extends Reference, TC extends OpenApi> = OpenApiParameterOrRefToType<
-  ParseReference<T['$ref'], TC>,
-  TC
->;
-
 type OpenApiParameterToType<T extends Parameter, TC extends OpenApi> = T['required'] extends true
   ? {[K2 in T['name']]: SchemaToType<T['schema'], TC> }
   : {[K2 in T['name']]?: SchemaToType<T['schema'], TC> };
@@ -38,7 +34,7 @@ type OpenApiParameterToType<T extends Parameter, TC extends OpenApi> = T['requir
 type OpenApiParameterOrRefToType<T, TC extends OpenApi> = T extends Parameter
   ? OpenApiParameterToType<T, TC>
   : T extends Reference
-    ? OpenApiRefToType<T, TC>
+    ? OpenApiParameterOrRefToType<ParseReference<T['$ref'], TC>, TC>
     : never;
 
 type OpenApiParametersToTypes<T extends readonly (Parameter | Reference)[], TC extends OpenApi> = Merged<
@@ -47,35 +43,81 @@ type OpenApiParametersToTypes<T extends readonly (Parameter | Reference)[], TC e
   >
 >;
 
-type ParametersOfOperationByOperationId<
+type OpenApiRequestBodyToType<
+  T extends RequestBody,
+  TC extends OpenApi,
+> = T['content']['application/json'] extends undefined
+  ? Record<string, any>
+  : SchemaToType<T['content']['application/json']['schema'], TC>;
+
+type OpenApiRequestBodyOrRefToTypes<T, TC extends OpenApi> =
+  T extends RequestBody
+    ? OpenApiRequestBodyToType<T, TC>
+    : T extends Reference
+      ? OpenApiRequestBodyOrRefToTypes<ParseReference<T['$ref'], TC>, TC>
+      : never;
+
+type ArgsFromOperationOrPathItemParameters<
+  T extends Operation | PathItem,
+  TSpec extends OpenApi,
+> = T['parameters'] extends readonly (Parameter | Reference)[]
+  ? OpenApiParametersToTypes<T['parameters'], TSpec>
+  : Record<string, never>;
+
+type ArgsFromOperationRequestBody<
   T extends Operation,
   TSpec extends OpenApi,
 > = T['operationId'] extends string
-  ? T['parameters'] extends readonly (Parameter | Reference)[]
-    ? OpenApiParametersToTypes<T['parameters'], TSpec>
+  ? T['requestBody'] extends RequestBody | Reference
+    ? OpenApiRequestBodyOrRefToTypes<T['requestBody'], TSpec>
     : Record<string, never>
   : Record<string, any>;
 
-type ParametersOfPathItem<
+type ArgsOfOperation<
+  T extends Operation,
+  TSpec extends OpenApi,
+  TRequestBodyArgs = ArgsFromOperationRequestBody<T, TSpec>,
+  TParameterArgs = ArgsFromOperationOrPathItemParameters<T, TSpec>,
+> = TRequestBodyArgs extends Record<string, never>
+  ? TParameterArgs
+  : TParameterArgs extends Record<string, never>
+    ? TRequestBodyArgs
+    : Merged<TParameterArgs & TRequestBodyArgs>;
+
+type ArgsOfOperationInPathItem<
+  T extends PathItem,
+  TOperation extends Operation,
+  TSpec extends OpenApi,
+  TPathItemArgs = ArgsFromOperationOrPathItemParameters<T, TSpec>,
+  TOperationArgs = ArgsOfOperation<TOperation, TSpec>
+> = TPathItemArgs extends Record<string, never>
+  ? TOperationArgs extends Record<string, never>
+    ? never
+    : TOperationArgs
+  : TOperationArgs extends Record<string, never>
+    ? TPathItemArgs
+    : Merged<TPathItemArgs & TOperationArgs>;
+
+type ArgsOfOperationInPathItemIfDefined<
   T extends PathItem,
   TOperation extends string,
   TSpec extends OpenApi,
-  TStuff = Extract<T[keyof T & OpenApiOperationType], { operationId: TOperation }>
-> = [TStuff] extends [never]
+  TOperationObject = Extract<T[keyof T & OpenApiOperationType], { operationId: TOperation }>,
+> = [TOperationObject] extends [never]
   ? never
-  : TStuff extends Operation
-    ? ParametersOfOperationByOperationId<TStuff, TSpec>
+  : TOperationObject extends Operation
+    ? ArgsOfOperationInPathItem<T, TOperationObject, TSpec>
     : never;
 
-export type ParametersOfOpenApiOperation<
+type ArgsOfOpenApiOperation<
   T extends OpenApi,
   TOperation extends string,
 > = {
-  [key in keyof T['paths']]: ParametersOfPathItem<T['paths'][key], TOperation, T>
+  [key in keyof T['paths']]: ArgsOfOperationInPathItemIfDefined<T['paths'][key], TOperation, T>
 }[keyof T['paths']];
 
 export type OpenApiArgTypes<
   TSpec extends OpenApi,
   TOperation extends string = string,
-  TParams = ParametersOfOpenApiOperation<TSpec, TOperation>
+  TParams = ArgsOfOpenApiOperation<TSpec, TOperation>
 > = [TParams] extends [never] ? any : TParams;

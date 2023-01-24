@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable array-bracket-spacing */
-/* eslint-disable comma-dangle */
-/* eslint-disable quotes */
-/* eslint-disable quote-props */
-/* eslint-disable max-len */
 export default {
   "openapi": "3.0.0",
   "servers": [
