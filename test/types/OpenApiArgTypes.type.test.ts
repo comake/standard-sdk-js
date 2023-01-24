@@ -126,3 +126,54 @@ type ExpectedArgs3 = {
 };
 const assertArgsFromRequestBody: A.Equals<Args3, ExpectedArgs3> = 1;
 assertArgsFromRequestBody;
+
+const openApiWithUnsupportedOperationRequestBody = {
+  openapi: '3.1.0',
+  info: { title: 'Example', version: '1.0.0' },
+  paths: {
+    '/path/to/operation': {
+      get: {
+        operationId: 'GetOperation',
+        responses: {},
+        parameters: [
+          {
+            name: 'query',
+            in: 'path',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          },
+        ],
+        requestBody: {
+          content: {
+            '*/*': {
+              schema: {
+                type: 'object',
+                properties: {
+                  query: {
+                    type: 'string',
+                  },
+                  fields: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                    },
+                  },
+                },
+                required: [ 'query' ],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} as const;
+
+type Args4 = OpenApiArgTypes<typeof openApiWithUnsupportedOperationRequestBody, 'GetOperation'>;
+type ExpectedArgs4 = {
+  query: string;
+};
+const assertArgsNotFromUnsupportedRequestBody: A.Equals<Args4, ExpectedArgs4> = 1;
+assertArgsNotFromUnsupportedRequestBody;

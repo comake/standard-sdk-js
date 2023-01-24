@@ -46,9 +46,9 @@ type OpenApiParametersToTypes<T extends readonly (Parameter | Reference)[], TC e
 type OpenApiRequestBodyToType<
   T extends RequestBody,
   TC extends OpenApi,
-> = T['content']['application/json'] extends undefined
-  ? Record<string, any>
-  : SchemaToType<T['content']['application/json']['schema'], TC>;
+> = T['content'] extends { 'application/json': any }
+  ? SchemaToType<T['content']['application/json']['schema'], TC>
+  : Record<string, never>;
 
 type OpenApiRequestBodyOrRefToTypes<T, TC extends OpenApi> =
   T extends RequestBody
