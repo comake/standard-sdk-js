@@ -3,7 +3,7 @@ import ticketmasterOpenApiSpec from '../assets/TicketmasterOpenapi';
 import { describeIf } from '../util/Util';
 
 describeIf('docker', 'Operation execution', (): void => {
-  it('sends a web request and gets the response.', async(): Promise<void> => {
+  it('sends a web request and gets the response from the Ticketmaster API.', async(): Promise<void> => {
     const ssdk = StandardSDK.build({
       apiSpecs: {
         ticketmaster: {

@@ -1,5 +1,10 @@
 # Standard SDK Release Notes
 
+## v1.3.0
+
+### New Features
+- Support for supplying arguments to operations which are specified in the `requestBody` field of an operation in an OpenAPI spec.
+
 ## v1.2.0
 
 ### New Features
