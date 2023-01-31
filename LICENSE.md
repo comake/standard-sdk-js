@@ -1,7 +1,7 @@
+MIT License
+
 For the avoidance of doubt, this license does not grant the licensee any rights 
 or licenses under Comake's patent rights and Comake reserves any and all such rights.
-
-MIT License
 
 Copyright (c) 2023 Comake, Inc.
 
