@@ -6,12 +6,12 @@ Instantiates a Standard SDK with your APIs of choice.
 
 #### Parameters
 
-The `build` method takes one argument which may have either or both of `apiSpecs` and `skqlOptions`.
+The `build` method takes one argument which may have either or both of `apiSpecs` and `sklEngineOptions`.
 
 | Parameter | Type | Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
 | :--- | :--- | :--- |
 | `apiSpecs` | `object` | A hash of `ApiSpecOptions` objects. Describes the API specs for StandardSDK to construct namespaced operations from. |
-| `skqlOptions` | `object` | An `SkqlOptions` object as defined by [@comake/skql-js-engine](https://www.npmjs.com/package/@comake/skql-js-engine) |
+| `sklEngineOptions` | `object` | An `SKLEngineOptions` object as defined by [@comake/skl-js-engine](https://www.npmjs.com/package/@comake/skl-js-engine) |
 
 #### ApiSpecOptions
 
@@ -24,7 +24,7 @@ The `build` method takes one argument which may have either or both of `apiSpecs
 
 #### Return Value
 
-A `StandardSDK` instance with a namespace for each key in `apiSpecs`, if supplied. May also have an `skql` property if `skqlOptions` was supplied.
+A `StandardSDK` instance with a namespace for each key in `apiSpecs`, if supplied. May also have an `skl` property if `sklEngineOptions` was supplied.
 
 #### Example Usage
 
@@ -83,33 +83,33 @@ const axiosResponse = await standardSdk.ticketmaster.SearchEvents(
 );
 ```
 
-## [`standardSDKInstance.skql`](#standardsdkinstanceskql)
+## [`standardSDKInstance.skl`](#standardsdkinstanceskl)
 
-A [SKQL JS Engine](https://www.npmjs.com/package/@comake/skql-js-engine) instance which is instantiated when the `skqlOptions` parameter is supplied when Standard SDK is built.
-
-#### Example Usage
-
-In Typescript:
-
-```typescript
-const skql = standardSdk.skql;
-```
-
-## [`standardSDKInstance.skql.do`](#standardsdkinstanceskqldo)
-
-The [Verb](https://docs.standardknowledge.com/fundamentals#verbs) execution interface of the [SKQL JS Engine](https://www.npmjs.com/package/@comake/skql-js-engine) instance accessed through Standard SDK.
+A [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) instance which is instantiated when the `sklEngineOptions` parameter is supplied when Standard SDK is built.
 
 #### Example Usage
 
 In Typescript:
 
 ```typescript
-const skql = standardSdk.skql.do;
+const skl = standardSdk.skl;
 ```
 
-## [`standardSDKInstance.skql.do.<verb>(args)`](#standardsdkinstanceskqldoverb)
+## [`standardSDKInstance.skl.verb`](#standardsdkinstancesklverb)
 
-Executes the verb called `<verb>` according to its Schema and related Mappings in the Schemas provided to the [SKQL JS Engine](https://www.npmjs.com/package/@comake/skql-js-engine) instance via the `skqlOptions` parameter when building Standard SDK.
+The [Verb](https://docs.standardknowledge.com/fundamentals#verbs) execution interface of the [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) instance accessed through Standard SDK.
+
+#### Example Usage
+
+In Typescript:
+
+```typescript
+const skl = standardSdk.skl.verb;
+```
+
+## [`standardSDKInstance.skl.verb.<verb>(args)`](#standardsdkinstancesklverbverb)
+
+Executes the verb called `<verb>` according to its Schema and related Mappings in the Schemas provided to the [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) instance via the `sklEngineOptions` parameter when building Standard SDK.
 
 #### Parameters
 
@@ -119,14 +119,14 @@ Executes the verb called `<verb>` according to its Schema and related Mappings i
 
 #### Return Value
 
-Verbs executed using [SKQL JS Engine](https://www.npmjs.com/package/@comake/skql-js-engine) return [`Promises`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) which resolve to an [`AxiosResponse`](https://github.com/axios/axios#response-schema) object.
+Verbs executed using [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) return [`Promises`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) which resolve to an [`AxiosResponse`](https://github.com/axios/axios#response-schema) object.
 
 #### Example Usage
 
 In Typescript:
 
 ```typescript
-const response = standardSdk.skql.do.getEvents({
+const response = standardSdk.skl.verb.getEvents({
   account: 'https://example.com/data/TicketmasterAccount',
   city: 'New York',
 });
