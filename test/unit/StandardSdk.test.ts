@@ -1,4 +1,4 @@
-import { Skql } from '@comake/skql-js-engine';
+import { SKLEngine } from '@comake/skl-js-engine';
 import { OpenApiOperationExecutor } from '../../src/operation-executor/OpenApiOperationExecutor';
 import { StandardSDK } from '../../src/StandardSdk';
 import ticketmasterOpenApiSpec from '../assets/TicketmasterOpenapi';
@@ -12,7 +12,7 @@ describe('A StandardSDK', (): void => {
     }));
   });
 
-  it('throws an error when accessing skql if skqlOptions were not given.', (): void => {
+  it('throws an error when accessing skl if sklEngineOptions were not given.', (): void => {
     const ssdk = StandardSDK.build({
       apiSpecs: {
         ticketmaster: {
@@ -21,8 +21,8 @@ describe('A StandardSDK', (): void => {
         },
       },
     });
-    expect((): any => ssdk.skql)
-      .toThrow('Failed to access skql. No `skqlOptions` found on initialization of StandardSDK.');
+    expect((): any => ssdk.skl)
+      .toThrow('Failed to access skl. No `sklEngineOptions` found on initialization of StandardSDK.');
   });
 
   it('throws an error if an unsupported API spec type is supplied.', async(): Promise<void> => {
@@ -63,12 +63,12 @@ describe('A StandardSDK', (): void => {
     await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
   });
 
-  it('can access skql if skqlOptions are supplied.', (): void => {
+  it('can access skl if sklEngineOptions are supplied.', (): void => {
     const ssdk = StandardSDK.build({
-      skqlOptions: {
+      sklEngineOptions: {
         type: 'memory',
       },
     });
-    expect(ssdk.skql).toBeInstanceOf(Skql);
+    expect(ssdk.skl).toBeInstanceOf(SKLEngine);
   });
 });

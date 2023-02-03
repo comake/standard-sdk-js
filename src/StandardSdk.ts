@@ -1,5 +1,5 @@
-import type { SkqlOptions } from '@comake/skql-js-engine';
-import { Skql } from '@comake/skql-js-engine';
+import type { SKLEngineOptions } from '@comake/skl-js-engine';
+import { SKLEngine } from '@comake/skl-js-engine';
 import type { ApiOperationNamespace } from './ApiOperationNamespace';
 import type { ApiSpecOptions, ApiSpecs, ApiSpecType } from './ApiSpecOptions';
 import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
@@ -12,29 +12,29 @@ export interface StandardSdkArgs<T extends ApiSpecs> {
   */
   readonly apiSpecs?: T;
   /**
-  * Options to pass to build an Skql object which can be accessed through this StandardSDK instance
+  * Options to pass to build an SKLEngine object which can be accessed through this StandardSDK instance
   */
-  readonly skqlOptions?: SkqlOptions;
+  readonly sklEngineOptions?: SKLEngineOptions;
 }
 
 class StandardSDKBase<T extends ApiSpecs> {
-  private readonly _skql?: Skql;
+  private readonly _sklEngine?: SKLEngine;
 
   public constructor(args: StandardSdkArgs<T>) {
     if (args.apiSpecs) {
       const apiOperationNamespaces = this.createApiOperationNamespaces(args.apiSpecs);
       Object.assign(this, apiOperationNamespaces);
     }
-    if (args.skqlOptions) {
-      this._skql = new Skql(args.skqlOptions);
+    if (args.sklEngineOptions) {
+      this._sklEngine = new SKLEngine(args.sklEngineOptions);
     }
   }
 
-  public get skql(): Skql {
-    if (this._skql) {
-      return this._skql;
+  public get skl(): SKLEngine {
+    if (this._sklEngine) {
+      return this._sklEngine;
     }
-    throw new Error('Failed to access skql. No `skqlOptions` found on initialization of StandardSDK.');
+    throw new Error('Failed to access skl. No `sklEngineOptions` found on initialization of StandardSDK.');
   }
 
   private createApiOperationNamespaces<TS extends ApiSpecs>(

@@ -1,4 +1,4 @@
-export * from '@comake/skql-js-engine/dist/util/Types';
+export * from '@comake/skl-js-engine/dist/util/Types';
 
 export * from '@comake/openapi-operation-executor/dist/OpenApiClientConfiguration';
 export * from '@comake/openapi-operation-executor/dist/OpenApiSchemaConfiguration';
