@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0 (2-3-2023)
+
+## Changed
+
+- Refactor: Replace skql-js-engine with skl-js-engine ([794dd9b](https://github.com/comake/standard-sdk-js/commit/794dd9bbf417a629e3b3a8ae9e48579cd72b3527))
+- Refactor: Rename skql to skl ([794dd9b](https://github.com/comake/standard-sdk-js/commit/794dd9bbf417a629e3b3a8ae9e48579cd72b3527))
+
 ## 1.3.0 (1-24-2023)
 
 ### Features

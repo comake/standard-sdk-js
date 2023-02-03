@@ -1,5 +1,12 @@
 # Standard SDK Release Notes
 
+## v2.0.0
+
+### API Changes
+
+- `standardSDK.skql` was changed to `standardSDK.skl`
+- `skqlOptions` was changed to `sklEngineOptions`
+
 ## v1.3.0
 
 ### New Features
