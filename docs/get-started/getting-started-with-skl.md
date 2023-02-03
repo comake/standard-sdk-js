@@ -27,7 +27,7 @@ Lets assume we're building an events calendar web-app for the city we live in. O
 I order to build our system we have to:
 
 1. **Define SKL [Schemas](https://docs.standardknowledge.com/fundamentals#schemas)** to abstract the data and operations we will be accessing from each API into a common data model.
-2. **Use a [Standard Knowledge Query Language Engine (SKQL Engine)](https://docs.standardknowledge.com/get-started/engine)** to read and execute our Schemas to perform the operations our app requires.
+2. **Use a [Standard Knowledge Language Engine (SKL Engine)](https://docs.standardknowledge.com/get-started/engine)** to read and execute our Schemas to perform the operations our app requires.
 3. **Write code** to implement the application
 
 
@@ -52,16 +52,16 @@ Examples of these Schemas are available as JSON-LD in the [unified-events-api/sk
 
 Most APIs require a sensitive access token or API key to make authenticated requests. SKL automatically reads these from a `Security Credentials` entity in your schemas. You can see an example of one in [entities.json](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json#L30-L33). You'll notice that the `apiKey` field is stubbed out with `ENV_TICKETMASTER_APIKEY`. This is because we don't want to put a real API key in the public repository on Github. When the example code is run, we swap out any string starting with the prefix `ENV_` with the value of the environment variable named the remainder of the stub, in this case `TICKETMASTER_APIKEY`. If your schemas are private, you can include the environment variables directly in the Schemas.
 
-## 2. Use a SKQL Engine
+## 2. Use a SKL Engine
 
-Now that we have schemas, we need to use an [SKQL Engine](https://docs.standardknowledge.com/get-started/engine) to read and execute them according to our code. Standard SDK JS includes the [SKQL JS Engine](https://github.com/comake/skql-js-engine) inside of it. This way, with only one dependency, you can use Standard SDK normally when creating abstractions is too hard for your circumstance or use case but have the power of SKL's abstractions to solve the majority of your needs.
+Now that we have schemas, we need to use an [SKL Engine](https://docs.standardknowledge.com/get-started/engine) to read and execute them according to our code. Standard SDK JS includes the [SKL JS Engine](https://github.com/comake/skl-js-engine) inside of it. This way, with only one dependency, you can use Standard SDK normally when creating abstractions is too hard for your circumstance or use case but have the power of SKL's abstractions to solve the majority of your needs.
 
-Build Standard SDK using the `skqlOptions` argument. This argument is the same interface as the arguments to build [SKQL JS Engine](https://github.com/comake/skql-js-engine).
+Build Standard SDK using the `sklEngineOptions` argument. This argument is the same interface as the arguments to build [SKL JS Engine](https://github.com/comake/skl-js-engine).
 
 In Typescript:
 ```typescript
 const standardSdk = StandardSDK.build({
-  skqlOptions: {
+  sklEngineOptions: {
     type: 'memory',
     schemas: <yourSchemasHere>,
   },
@@ -71,24 +71,24 @@ If your schemas are separated across multiple files and/or use a JSON-LD `@conte
 
 ## 3. Write Code
 
-Finally, you're ready to write some code using the Standard SDK instance you just built. Since we provided `skqlOptions` you can access the SKQL JS Engine through `standardSdk.skql`.
+Finally, you're ready to write some code using the Standard SDK instance you just built. Since we provided `sklEngineOptions` you can access the SKL JS Engine through `standardSdk.skl`.
 
 In Typescript:
 ```typescript
-const ticketmasterResponse = await standardSdk.skql.verb.getEvents({
+const ticketmasterResponse = await standardSdk.skl.verb.getEvents({
   account: 'https://example.com/data/TicketmasterAccount',
   city: 'New York',
 });
 
-const stubhubResponse = await standardSdk.skql.verb.getEvents({
+const stubhubResponse = await standardSdk.skl.verb.getEvents({
   account: 'https://example.com/data/StubhubAccount',
   city: 'New York',
 });
 
-const seatgeekResponse = await standardSdk.skql.verb.getEvents({
+const seatgeekResponse = await standardSdk.skl.verb.getEvents({
   account: 'https://example.com/data/SeatgeekAccount',
   city: 'New York',
 });
 ```
 
-This code will tell the SKQL JS Engine to execute the `getEvents` Verb using each `account` represented by URIs (eg. `https://example.com/data/TicketmasterAccount`). In [entities.json](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json), which you copied or reviewed earlier, there are Schemas which contain the [OpenAPI specifications](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json#L42) and [security credentials](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json#L30) for each API. In [mappings.json](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/mappings.json), there are mappings which relate each [Integration](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/mappings.json#L38) with the [getEvents Verb](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/mappings.json#L39). Together, these entities and mappings inform the SKQL JS Engine how to map the parameters of the `getEvents` Verb to the parameters of each API, send a properly formatted web request to the API, and map the response of the API into our standardized Event Noun.
+This code will tell the SKL JS Engine to execute the `getEvents` Verb using each `account` represented by URIs (eg. `https://example.com/data/TicketmasterAccount`). In [entities.json](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json), which you copied or reviewed earlier, there are Schemas which contain the [OpenAPI specifications](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json#L42) and [security credentials](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/entities.json#L30) for each API. In [mappings.json](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/mappings.json), there are mappings which relate each [Integration](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/mappings.json#L38) with the [getEvents Verb](https://github.com/comake/skl-examples/blob/main/unified-events-api/skl-schemas/mappings.json#L39). Together, these entities and mappings inform the SKL JS Engine how to map the parameters of the `getEvents` Verb to the parameters of each API, send a properly formatted web request to the API, and map the response of the API into our standardized Event Noun.
