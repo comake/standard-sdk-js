@@ -1,7 +1,7 @@
-import type { OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import type { SKLEngineOptions } from '@comake/skl-js-engine';
 import { SKLEngine } from '@comake/skl-js-engine';
 import type { ApiOperationNamespace } from './ApiOperationNamespace';
+import { BaseApiOperationNamespace } from './ApiOperationNamespace';
 import type { ApiSpecOptions, ApiSpecs } from './ApiSpecOptions';
 import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
 import type { OperationExecutor } from './operation-executor/OperationExecutor';
@@ -47,13 +47,11 @@ class StandardSDKBase<T extends ApiSpecs> {
         [ apiSpecName, specObject ]: [string, TR],
       ): Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>> => {
         const executor = this.generateExecutorForApiSpecOptions(specObject);
-        const operationHandler = this.buildOperationHandlerForApiSpec(executor, specObject.defaultConfiguration);
+        const operationHandler = this.buildOperationHandlerForApiSpec(executor);
+        const baseOperationNamespace = new BaseApiOperationNamespace(specObject);
         return {
           ...obj,
-          [apiSpecName]: new Proxy(
-            {} as ApiOperationNamespace<ApiSpecOptions>,
-            { get: operationHandler },
-          ),
+          [apiSpecName]: new Proxy(baseOperationNamespace, { get: operationHandler }),
         };
       // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
       }, {} as Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>>);
@@ -70,7 +68,6 @@ class StandardSDKBase<T extends ApiSpecs> {
 
   private buildOperationHandlerForApiSpec(
     executor: OperationExecutor,
-    defaultConfiguration?: OpenApiClientConfiguration,
   ): (
       target: ApiOperationNamespace<ApiSpecOptions>,
       operation: string,
@@ -78,8 +75,11 @@ class StandardSDKBase<T extends ApiSpecs> {
     return (
       target: ApiOperationNamespace<ApiSpecOptions>,
       operation: string,
-    ): OperationHandler =>
-      async(
+    ): OperationHandler => {
+      if (Object.getOwnPropertyNames(BaseApiOperationNamespace.prototype).includes(operation)) {
+        return target[operation];
+      }
+      return async(
         args?: Record<string, any>,
         configuration?: Record<string, any>,
         options?: Record<string, any>,
@@ -87,9 +87,10 @@ class StandardSDKBase<T extends ApiSpecs> {
         await executor.executeOperation(
           operation,
           args,
-          configuration,
-          { ...defaultConfiguration, ...options },
+          { ...target.defaultConfiguration, ...configuration },
+          { ...target.defaultOptions, ...options },
         );
+    };
   }
 }
 
