@@ -91,3 +91,58 @@ Each operation was supplied relevant arguments as the first parameter and config
 
 ### OpenAPI Directory
 For your convenience, we have compiled a [directory of OpenAPI specs](https://github.com/comake/openapi-directory) of many popular APIs that you can use in your projects. We'd like to acknowledge [APIs.guru](https://apis.guru/), who supplied most of the API specs in the directory. Please submit any missing OpenAPI specs or ones you create as PRs to the directory. That way other developers can re-use them!
+
+### Default Configuration and Options
+
+If your API requires certain security credentials or headers on all requests, it may get repetitive to supply those on every operation you execute. Instead, you can set default configuration either when you build your SDK, and/or at any other time after the SDK is built.
+
+When building your SDK, you can supply optional parameters `defaultConfiguration` and `defaultOptions` for each API.
+```typescript
+import { StandardSDK } from '@comake/standard-sdk-js';
+import ticketmasterOpenApiSpec from './path/to/ticketmaster-openapi-spec.ts';
+
+// Build the Standard SDK with your API specs of choice
+const standardSdk = StandardSDK.build({
+  apiSpecs: {
+    ticketmaster: {
+      type: 'openapi',
+      value: ticketmasterOpenApiSpec,
+      defaultConfiguration: {
+        apiKey: 'abc123'
+      },
+      defaultOptions: {
+        headers: {
+          'X-Powered-By': 'Comake'
+        }
+      }
+    }
+  },
+});
+```
+
+After building your SDK, you can use the `setDefaultConfiguration` and `setDefaultOptions` methods to update the configuration and options applied to every operation you execute with an API.
+
+```typescript
+import { StandardSDK } from '@comake/standard-sdk-js';
+import ticketmasterOpenApiSpec from './path/to/ticketmaster-openapi-spec.ts';
+
+// Build the Standard SDK with your API specs of choice
+const standardSdk = StandardSDK.build({
+  apiSpecs: {
+    ticketmaster: {
+      type: 'openapi',
+      value: ticketmasterOpenApiSpec
+    }
+  },
+});
+
+standardSdk.ticketmaster.setDefaultConfiguration({
+  apiKey: 'abc123'
+});
+
+standardSdk.ticketmaster.setDefaultOptions({
+  headers: {
+    'X-Powered-By': 'Comake'
+  }
+});
+```

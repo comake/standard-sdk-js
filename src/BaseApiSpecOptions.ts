@@ -13,7 +13,7 @@ export interface BaseApiSpecOptions {
   */
   readonly value: string | Record<string, unknown>;
   /**
-  * Default OpenApi configuration supplied to every operation of this API.
+  * Default configuration supplied to every operation of this API.
   */
   readonly defaultConfiguration?: Record<string, any>;
   /**
