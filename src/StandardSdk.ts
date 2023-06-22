@@ -1,7 +1,8 @@
+import type { OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import type { SKLEngineOptions } from '@comake/skl-js-engine';
 import { SKLEngine } from '@comake/skl-js-engine';
 import type { ApiOperationNamespace } from './ApiOperationNamespace';
-import type { ApiSpecOptions, ApiSpecs, ApiSpecType } from './ApiSpecOptions';
+import type { ApiSpecOptions, ApiSpecs } from './ApiSpecOptions';
 import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
 import type { OperationExecutor } from './operation-executor/OperationExecutor';
 import type { OperationHandler } from './OperationHandler';
@@ -39,23 +40,23 @@ class StandardSDKBase<T extends ApiSpecs> {
 
   private createApiOperationNamespaces<TS extends ApiSpecs>(
     apiSpecs: TS,
-  ): Record<keyof TS, ApiOperationNamespace<ApiSpecType, any>> {
+  ): Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>> {
     return Object.entries(apiSpecs)
       .reduce(<TR extends ApiSpecOptions>(
-        obj: Record<keyof TS, ApiOperationNamespace<ApiSpecType, any>>,
+        obj: Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>>,
         [ apiSpecName, specObject ]: [string, TR],
-      ): Record<keyof TS, ApiOperationNamespace<ApiSpecType, any>> => {
+      ): Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>> => {
         const executor = this.generateExecutorForApiSpecOptions(specObject);
-        const operationHandler = this.buildOperationHandlerForApiSpec(executor);
+        const operationHandler = this.buildOperationHandlerForApiSpec(executor, specObject.defaultConfiguration);
         return {
           ...obj,
           [apiSpecName]: new Proxy(
-            {} as ApiOperationNamespace<ApiSpecType, any>,
+            {} as ApiOperationNamespace<ApiSpecOptions>,
             { get: operationHandler },
           ),
         };
       // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
-      }, {} as Record<keyof TS, ApiOperationNamespace<any, any>>);
+      }, {} as Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>>);
   }
 
   private generateExecutorForApiSpecOptions<TR extends ApiSpecOptions>(
@@ -67,14 +68,15 @@ class StandardSDKBase<T extends ApiSpecs> {
     throw new Error(`API Specification type ${apiSpec.type} is not supported.`);
   }
 
-  private buildOperationHandlerForApiSpec<TR extends ApiSpecType>(
+  private buildOperationHandlerForApiSpec(
     executor: OperationExecutor,
+    defaultConfiguration?: OpenApiClientConfiguration,
   ): (
-      target: ApiOperationNamespace<TR, any>,
+      target: ApiOperationNamespace<ApiSpecOptions>,
       operation: string,
     ) => OperationHandler {
     return (
-      target: ApiOperationNamespace<TR, any>,
+      target: ApiOperationNamespace<ApiSpecOptions>,
       operation: string,
     ): OperationHandler =>
       async(
@@ -86,13 +88,13 @@ class StandardSDKBase<T extends ApiSpecs> {
           operation,
           args,
           configuration,
-          options,
+          { ...defaultConfiguration, ...options },
         );
   }
 }
 
 type NamespacedApiOperationNamespace<T extends ApiSpecs> = {
-  [key in keyof T]: ApiOperationNamespace<T[key]['type'], T[key]['value']>
+  [key in keyof T]: ApiOperationNamespace<T[key]>
 };
 
 export type StandardSDK<T extends ApiSpecs> = StandardSDKBase<T> & NamespacedApiOperationNamespace<T>;

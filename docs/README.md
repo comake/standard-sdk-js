@@ -4,6 +4,8 @@ Standard SDK is an open source software package that provides you with a single 
 
 Developers commonly spent lots of time installing SDKs, reading documentation, and figuring out how to use each SDK to build integrations using APIs and to add features to their application. Instead of going through this time consuming process installing and learning many different SDKs, a developer can just install Standard SDK to build any integration their application requires. In addition to saving time, removing dependencies on all those SDKs in favor of just one can reduce your application's build size, and make it easier to onboard developers to your codebase.
 
+[![Standard SDK Introductory Demo](https://img.youtube.com/vi/hXgUag6VX30/0.jpg)](https://www.youtube.com/watch?v=hXgUag6VX30)
+
 ### How it works
 
 Standard SDK is powered by open source standardized API specifications like [OpenAPI](https://www.openapis.org/). It uses these API specifications to know how to send properly formatted web requests, RPC messages, SQL queries, etc. to the APIs you want your application to integrate with. The API specifications which Standard SDK works with or is planning to add support for include:

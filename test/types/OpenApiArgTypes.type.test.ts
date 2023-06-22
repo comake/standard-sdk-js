@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-unused-expressions */
 import type { A } from 'ts-toolbelt';
 import type { OpenApiArgTypes } from '../../src/openapi-types/OpenApiArgTypes';
