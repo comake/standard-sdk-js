@@ -17,14 +17,16 @@ The `build` method takes one argument which may have either or both of `apiSpecs
 
 `ApiSpecOptions` are the configurations you pass when building a Standard SDK for the APIs you want to work with. Different types of APIs have their own specific options. Currently we only support OpenAPI specs.
 
-**Common ApiSpecOptions fields**
-
-- `type` - A type of API specification. Possible values are: `openapi`
-- `value` - The contents of the API specification. Usually a string or JSON object.
+| Parameter | Required | Description |
+| --- | --- | ------------ |
+| `type` | Required | A type of API specification. Possible values are: `openapi` |
+| `value` | Required | The contents of the API specification. Usually a string or JSON object. When using Typescript, use `as const` on your API spec to get extended type support. |
+| `defaultConfiguration` | | Optional configuration that will be added to every operation of this API. For OpenAPI specs, this field will be an `OpenApiClientConfiguration` object as defined in [@comake/openapi-operation-executor](https://github.com/comake/openapi-operation-executor). |
+| `defaultOptions` | | Optional options that will be applied to every operation of this API. For OpenAPI operations, this is an `AxiosRequestConfig` object. See the [axios API documentation](https://github.com/axios/axios#request-config) for reference. |
 
 #### Return Value
 
-A `StandardSDK` instance with a namespace for each key in `apiSpecs`, if supplied. May also have an `skl` property if `sklEngineOptions` was supplied.
+A `StandardSDK` instance with a namespace for each key in `apiSpecs`. It may also have an `skl` property if `sklEngineOptions` was supplied.
 
 #### Example Usage
 
@@ -37,14 +39,22 @@ const standardSdk = StandardSDK.build({
     ticketmaster: {
       type: 'openapi',
       value: ticketmasterOpenApiSpec,
+      defaultConfiguration: {
+        apiKey: 'abc123'
+      },
+      defaultOptions: {
+        headers: {
+          'X-Powered-By': 'Comake'
+        }
+      }
     },
   },
 });
 ```
 
-## [`standardSDKInstance.<namespace>`](#standardsdkinstancenamespace)
+## [`standardSDKInstance.<namespace>`](#standardsdkinstance-namespace)
 
-A namespace of a `StandardSDK` instance corresponding to a set of supplied Api Spec Options. Has properties for each operation in the supplied API specification.
+A namespace of a `StandardSDK` instance corresponding to a set of supplied Api Spec Options. A namespace has a property for each operation in the supplied API specification. Each namespace also includes methods `setDefaultConfiguration` and `setDefaultOptions` to update the default configuration and options to all operations if the API.
 
 #### Example Usage
 In Typescript:
@@ -52,13 +62,40 @@ In Typescript:
 const sdkNamespace = standardSdk.ticketmaster;
 ```
 
-## [`standardSDKInstance.<namespace>.<operation>(args, configuration, options)`](#standardsdkinstancenamespaceoperationargs-configuration-options)
+## [`standardSDKInstance.<namespace>.setDefaultConfiguration(configuration)`](#standardsdkinstance-namespace-setDefaultConfiguration)
+
+Sets the default configuration for all operations of in an API namespace. When using an API described via an OpenAPI spec, the `configuration` parameter should be a `OpenApiClientConfiguration` object as defined in [@comake/openapi-operation-executor](https://github.com/comake/openapi-operation-executor).
+
+#### Example Usage
+In Typescript:
+```typescript
+standardSdk.ticketmaster.setDefaultConfiguration({
+  apiKey: 'acb123'
+});
+```
+
+## [`standardSDKInstance.<namespace>.setDefaultOptions(options)`](#standardsdkinstance-namespace-setDefaultConfiguration)
+
+Sets the default options for all operations of in an API namespace. When using an API described via an OpenAPI spec, the `options` parameter should be an `AxiosRequestConfig` object as defined in the [axios API documentation](https://github.com/axios/axios#request-config).
+
+#### Example Usage
+In Typescript:
+```typescript
+standardSdk.ticketmaster.setDefaultOptions({
+  headers: {
+    'X-Powered-By': 'Comake'
+  }
+});
+```
+
+
+## [`standardSDKInstance.<namespace>.<operation>(args, configuration, options)`](#standardsdkinstance-namespace-operation)
 
 Executes the API operation called `<operation>` according to the API specification corresponding to the namespace `<namespace>`.
 
 #### Parameters
 
-All parameters are not required.
+All parameters are optional, however, when using Typescript and executing an OpenAPI operation with required parameters or request body, the `args` parameter will be required.
 
 | Parameter | Type | Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
 | :--- | :--- | :--- |
@@ -66,7 +103,7 @@ All parameters are not required.
 | `configuration` | `object` | An object holding any configuration necessary for the operation. Most often this includes security credentials. For example, for an OpenAPI operation `configuration` may include an `apiKey` or `accessToken` to satisfy the [Security Requirement](https://spec.openapis.org/oas/v3.1.0#securityRequirementObject) of the operation. See note below for more information. |
 | `options` | `object` | An object holding any options to supply to the operation execution module to modfy default behaviors the request or message sent for the operation. For OpenAPI operations, this is an `AxiosRequestConfig` object. See the [axios API documentation](https://github.com/axios/axios#request-config) for reference. |
 
-⚠️ StandardSDK uses the [@comake/openapi-operation-executor](https://www.npmjs.com/package/@comake/openapi-operation-executor) package to execute OpenAPI operations. This library currently supports OpenAPI security types `oauth2`, `apiKey`, and `http` with scheme `basic`. See [the OpenAPI Spec](https://spec.openapis.org/oas/v3.1.0#security-scheme-object) for reference and the [@comake/openapi-operation-executor API docs](https://github.com/comake/openapi-operation-executor#api) for more information.
+⚠️ StandardSDK uses the [@comake/openapi-operation-executor](https://www.npmjs.com/package/@comake/openapi-operation-executor) package to execute OpenAPI operations. This library currently supports OpenAPI security types `oauth2`, `apiKey`, and `http` with schemes `basic` or `bearer`. See [the OpenAPI Spec](https://spec.openapis.org/oas/v3.1.0#security-scheme-object) for reference and the [@comake/openapi-operation-executor API docs](https://github.com/comake/openapi-operation-executor#api) for more information.
 
 #### Return Value
 
@@ -83,7 +120,7 @@ const axiosResponse = await standardSdk.ticketmaster.SearchEvents(
 );
 ```
 
-## [`standardSDKInstance.skl`](#standardsdkinstanceskl)
+## [`standardSDKInstance.skl`](#standardsdkinstance-skl)
 
 A [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) instance which is instantiated when the `sklEngineOptions` parameter is supplied when Standard SDK is built.
 
@@ -95,7 +132,7 @@ In Typescript:
 const skl = standardSdk.skl;
 ```
 
-## [`standardSDKInstance.skl.verb`](#standardsdkinstancesklverb)
+## [`standardSDKInstance.skl.verb`](#standardsdkinstance-skl-verb)
 
 The [Verb](https://docs.standardknowledge.com/fundamentals#verbs) execution interface of the [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) instance accessed through Standard SDK.
 
@@ -107,7 +144,7 @@ In Typescript:
 const skl = standardSdk.skl.verb;
 ```
 
-## [`standardSDKInstance.skl.verb.<verb>(args)`](#standardsdkinstancesklverbverb)
+## [`standardSDKInstance.skl.verb.<verb>(args)`](#standardsdkinstance-skl-verb-verb)
 
 Executes the verb called `<verb>` according to its Schema and related Mappings in the Schemas provided to the [SKL JS Engine](https://www.npmjs.com/package/@comake/skl-js-engine) instance via the `sklEngineOptions` parameter when building Standard SDK.
 

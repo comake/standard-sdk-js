@@ -10,8 +10,8 @@ import type {
   OAuth2SecurityScheme,
 } from '@comake/openapi-operation-executor';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { RequiredKeys } from '../type-utils/RequiredKeys';
 import type { OpenApiArgTypes } from './OpenApiArgTypes';
-import type { OpenApiClientConfigurationTypes } from './OpenApiConfigurationTypes';
 import type { OpenApiOperationType } from './OpenApiOperationType';
 
 type OpenApiSecuritySchemeToType<T extends SecurityScheme> =
@@ -55,45 +55,33 @@ type OperationIdsOfOpenApi<T extends OpenApi> = {
 type OpenApiOperationInterfaceForOperation<
   T extends string,
   TSpec extends OpenApi,
-  TDefaultConfig extends OpenApiClientConfiguration | undefined,
-  TSecurityTypes extends Record<string, OpenApiClientConfiguration> = OpenApiSecuritySchemesToTypes<TSpec>,
-  TArgs = OpenApiArgTypes<TSpec, T>,
-  TConfig = OpenApiClientConfigurationTypes<TSpec, T, TSecurityTypes, TDefaultConfig>
-> = TArgs extends undefined
-  ? [TConfig] extends undefined
-    // eslint-disable-next-line max-len
-    ? (args?: Record<string, any>, configuration?: OpenApiClientConfiguration, options?: AxiosRequestConfig) => Promise<AxiosResponse>
-    : [TConfig] extends [undefined]
-      // eslint-disable-next-line max-len
-      ? (args: Record<string, any>, configuration?: OpenApiClientConfiguration, options?: AxiosRequestConfig) => Promise<AxiosResponse>
-      : (args: Record<string, any>, configuration: TConfig, options?: AxiosRequestConfig) => Promise<AxiosResponse>
-  : [TConfig] extends undefined
-    ? (args: TArgs, configuration?: OpenApiClientConfiguration, options?: AxiosRequestConfig) => Promise<AxiosResponse>
-    : [TConfig] extends [undefined]
-      // eslint-disable-next-line max-len
-      ? (args: TArgs, configuration?: OpenApiClientConfiguration, options?: AxiosRequestConfig) => Promise<AxiosResponse>
-      : (args: TArgs, configuration: TConfig, options?: AxiosRequestConfig) => Promise<AxiosResponse>;
+  TArgs extends object = OpenApiArgTypes<TSpec, T>,
+> = TArgs extends never
+  ? (
+    args?: Record<string, any>,
+    configuration?: OpenApiClientConfiguration,
+    options?: AxiosRequestConfig
+  ) => Promise<AxiosResponse>
+  : RequiredKeys<TArgs> extends never
+    ? (
+      args?: TArgs,
+      configuration?: OpenApiClientConfiguration,
+      options?: AxiosRequestConfig
+    ) => Promise<AxiosResponse>
+    : (
+      args: TArgs,
+      configuration?: OpenApiClientConfiguration,
+      options?: AxiosRequestConfig
+    ) => Promise<AxiosResponse>;
 
-type OpenApiOperationInterface<
-  T extends OpenApi,
-  TDefaultConfig extends OpenApiClientConfiguration | undefined,
-  TSecurityTypes extends Record<string, OpenApiClientConfiguration> = OpenApiSecuritySchemesToTypes<T>,
-> = {
-  [operation in OperationIdsOfOpenApi<T>]: OpenApiOperationInterfaceForOperation<
-    operation,
-    T,
-    TDefaultConfig,
-    TSecurityTypes
-  >
+type OpenApiOperationInterface<T extends OpenApi> = {
+  [operation in OperationIdsOfOpenApi<T>]: OpenApiOperationInterfaceForOperation<operation, T>
 };
 
-export type OpenApiOperationNamespace<
-  T extends string | OpenApi,
-  TDefaultConfig extends OpenApiClientConfiguration | undefined,
-> = T extends OpenApi
-  ? OpenApiOperationInterface<T, TDefaultConfig>
+export type OpenApiOperationNamespace<T extends string | OpenApi> = T extends OpenApi
+  ? OpenApiOperationInterface<T>
   : Record<string, (
-    args?: any,
+    args?: Record<string, any>,
     configuration?: OpenApiClientConfiguration,
     options?: AxiosRequestConfig
   ) => Promise<AxiosResponse>>;

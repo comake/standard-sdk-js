@@ -12,7 +12,7 @@ export interface OpenApiSpecOptions extends BaseApiSpecOptions {
   */
   readonly value: string | OpenApi;
   /**
-  * Default configuration supplied to every operation of this API.
+  * Default OpenApi configuration supplied to every operation of this API.
   */
   readonly defaultConfiguration?: OpenApiClientConfiguration;
 }

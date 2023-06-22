@@ -1,8 +1,8 @@
-import type { OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import type { SKLEngineOptions } from '@comake/skl-js-engine';
 import { SKLEngine } from '@comake/skl-js-engine';
-import type { ApiOperationNamespace } from './ApiOperationNamespace';
+import type { ApiNamespace } from './ApiNamespace';
 import type { ApiSpecOptions, ApiSpecs } from './ApiSpecOptions';
+import { BaseApiNamespace } from './BaseApiNamespace';
 import { OpenApiOperationExecutor } from './operation-executor/OpenApiOperationExecutor';
 import type { OperationExecutor } from './operation-executor/OperationExecutor';
 import type { OperationHandler } from './OperationHandler';
@@ -23,7 +23,7 @@ class StandardSDKBase<T extends ApiSpecs> {
 
   public constructor(args: StandardSdkArgs<T>) {
     if (args.apiSpecs) {
-      const apiOperationNamespaces = this.createApiOperationNamespaces(args.apiSpecs);
+      const apiOperationNamespaces = this.createApiNamespaces(args.apiSpecs);
       Object.assign(this, apiOperationNamespaces);
     }
     if (args.sklEngineOptions) {
@@ -38,25 +38,23 @@ class StandardSDKBase<T extends ApiSpecs> {
     throw new Error('Failed to access skl. No `sklEngineOptions` found on initialization of StandardSDK.');
   }
 
-  private createApiOperationNamespaces<TS extends ApiSpecs>(
+  private createApiNamespaces<TS extends ApiSpecs>(
     apiSpecs: TS,
-  ): Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>> {
+  ): Record<keyof TS, ApiNamespace<ApiSpecOptions>> {
     return Object.entries(apiSpecs)
       .reduce(<TR extends ApiSpecOptions>(
-        obj: Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>>,
+        obj: Record<keyof TS, ApiNamespace<ApiSpecOptions>>,
         [ apiSpecName, specObject ]: [string, TR],
-      ): Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>> => {
+      ): Record<keyof TS, ApiNamespace<ApiSpecOptions>> => {
         const executor = this.generateExecutorForApiSpecOptions(specObject);
-        const operationHandler = this.buildOperationHandlerForApiSpec(executor, specObject.defaultConfiguration);
+        const operationHandler = this.buildOperationHandlerForApiSpec(executor);
+        const baseOperationNamespace = new BaseApiNamespace(specObject);
         return {
           ...obj,
-          [apiSpecName]: new Proxy(
-            {} as ApiOperationNamespace<ApiSpecOptions>,
-            { get: operationHandler },
-          ),
+          [apiSpecName]: new Proxy(baseOperationNamespace, { get: operationHandler }),
         };
       // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
-      }, {} as Record<keyof TS, ApiOperationNamespace<ApiSpecOptions>>);
+      }, {} as Record<keyof TS, ApiNamespace<ApiSpecOptions>>);
   }
 
   private generateExecutorForApiSpecOptions<TR extends ApiSpecOptions>(
@@ -70,16 +68,18 @@ class StandardSDKBase<T extends ApiSpecs> {
 
   private buildOperationHandlerForApiSpec(
     executor: OperationExecutor,
-    defaultConfiguration?: OpenApiClientConfiguration,
   ): (
-      target: ApiOperationNamespace<ApiSpecOptions>,
+      target: ApiNamespace<ApiSpecOptions>,
       operation: string,
     ) => OperationHandler {
     return (
-      target: ApiOperationNamespace<ApiSpecOptions>,
+      target: ApiNamespace<ApiSpecOptions>,
       operation: string,
-    ): OperationHandler =>
-      async(
+    ): OperationHandler => {
+      if (Object.getOwnPropertyNames(BaseApiNamespace.prototype).includes(operation)) {
+        return target[operation];
+      }
+      return async(
         args?: Record<string, any>,
         configuration?: Record<string, any>,
         options?: Record<string, any>,
@@ -87,17 +87,18 @@ class StandardSDKBase<T extends ApiSpecs> {
         await executor.executeOperation(
           operation,
           args,
-          configuration,
-          { ...defaultConfiguration, ...options },
+          { ...target.defaultConfiguration, ...configuration },
+          { ...target.defaultOptions, ...options },
         );
+    };
   }
 }
 
-type NamespacedApiOperationNamespace<T extends ApiSpecs> = {
-  [key in keyof T]: ApiOperationNamespace<T[key]>
+type NamespacedApiNamespace<T extends ApiSpecs> = {
+  [key in keyof T]: ApiNamespace<T[key]>
 };
 
-export type StandardSDK<T extends ApiSpecs> = StandardSDKBase<T> & NamespacedApiOperationNamespace<T>;
+export type StandardSDK<T extends ApiSpecs> = StandardSDKBase<T> & NamespacedApiNamespace<T>;
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const StandardSDK = {

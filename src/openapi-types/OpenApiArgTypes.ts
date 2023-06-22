@@ -120,4 +120,4 @@ export type OpenApiArgTypes<
   TSpec extends OpenApi,
   TOperation extends string = string,
   TParams = ArgsOfOpenApiOperation<TSpec, TOperation>
-> = [TParams] extends [never] ? undefined : TParams;
+> = [TParams] extends [never] ? never : TParams;

@@ -1,1 +1,7 @@
-export type OperationHandler = (args: any, configuration: any, options?: any) => Promise<any>;
+import type { AxiosRequestConfig } from 'axios';
+
+export type OperationHandler = (
+  args?: Record<string, any>,
+  configuration?: Record<string, any>,
+  options?: AxiosRequestConfig,
+) => Promise<any>;
