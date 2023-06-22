@@ -60,7 +60,7 @@ describe('A StandardSDK', (): void => {
         },
       },
     });
-    await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    await expect(ssdk.ticketmaster.SearchEvents({}, { apiKey: 'abc123' })).resolves.toBe('response');
   });
 
   it('can access skl if sklEngineOptions are supplied.', (): void => {
