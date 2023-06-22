@@ -1,4 +1,3 @@
-import type { OpenApiClientConfiguration } from '@comake/openapi-operation-executor';
 import type { AxiosRequestConfig } from 'axios';
 import type { ApiSpecType } from './ApiSpecOptions';
 
@@ -16,7 +15,7 @@ export interface BaseApiSpecOptions {
   /**
   * Default OpenApi configuration supplied to every operation of this API.
   */
-  readonly defaultConfiguration?: OpenApiClientConfiguration;
+  readonly defaultConfiguration?: Record<string, any>;
   /**
   * Default Axios Request Options supplied to every operation of this API.
   */
