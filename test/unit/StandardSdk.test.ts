@@ -6,9 +6,11 @@ import ticketmasterOpenApiSpec from '../assets/TicketmasterOpenapi';
 jest.mock('../../src/operation-executor/OpenApiOperationExecutor');
 
 describe('A StandardSDK', (): void => {
+  let executeOperation: any;
   beforeEach(async(): Promise<void> => {
+    executeOperation = jest.fn().mockResolvedValue('response');
     (OpenApiOperationExecutor as jest.Mock).mockImplementation((): any => ({
-      executeOperation: jest.fn().mockResolvedValue('response'),
+      executeOperation,
     }));
   });
 
@@ -49,6 +51,12 @@ describe('A StandardSDK', (): void => {
       },
     });
     await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    expect(executeOperation).toHaveBeenCalledWith(
+      'SearchEvents',
+      undefined,
+      {},
+      {},
+    );
   });
 
   it('can query an open api operation interface from a spec specified as a json object.', async(): Promise<void> => {
@@ -60,7 +68,109 @@ describe('A StandardSDK', (): void => {
         },
       },
     });
-    await expect(ssdk.ticketmaster.SearchEvents({}, { apiKey: 'abc123' })).resolves.toBe('response');
+    await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    expect(executeOperation).toHaveBeenCalledWith(
+      'SearchEvents',
+      undefined,
+      {},
+      {},
+    );
+  });
+
+  it('can query an open api operation interface with default configs.', async(): Promise<void> => {
+    const ssdk = StandardSDK.build({
+      apiSpecs: {
+        ticketmaster: {
+          type: 'openapi',
+          value: ticketmasterOpenApiSpec,
+          defaultConfiguration: {
+            accessToken: 'ab123',
+          },
+        },
+      },
+    });
+    await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    expect(executeOperation).toHaveBeenCalledWith(
+      'SearchEvents',
+      undefined,
+      { accessToken: 'ab123' },
+      {},
+    );
+  });
+
+  it('can query an open api operation interface with default options.', async(): Promise<void> => {
+    const ssdk = StandardSDK.build({
+      apiSpecs: {
+        ticketmaster: {
+          type: 'openapi',
+          value: ticketmasterOpenApiSpec,
+          defaultOptions: {
+            headers: {
+              'x-header': 'abc123',
+            },
+          },
+        },
+      },
+    });
+    await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    expect(executeOperation).toHaveBeenCalledWith(
+      'SearchEvents',
+      undefined,
+      {},
+      {
+        headers: {
+          'x-header': 'abc123',
+        },
+      },
+    );
+  });
+
+  it('can query an open api operation interface after setting default configuration.', async(): Promise<void> => {
+    const ssdk = StandardSDK.build({
+      apiSpecs: {
+        ticketmaster: {
+          type: 'openapi',
+          value: ticketmasterOpenApiSpec,
+        },
+      },
+    });
+    ssdk.ticketmaster.setDefaultConfiguration({
+      accessToken: 'ab123',
+    });
+    await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    expect(executeOperation).toHaveBeenCalledWith(
+      'SearchEvents',
+      undefined,
+      { accessToken: 'ab123' },
+      {},
+    );
+  });
+
+  it('can query an open api operation interface after setting default options.', async(): Promise<void> => {
+    const ssdk = StandardSDK.build({
+      apiSpecs: {
+        ticketmaster: {
+          type: 'openapi',
+          value: ticketmasterOpenApiSpec,
+        },
+      },
+    });
+    ssdk.ticketmaster.setDefaultOptions({
+      headers: {
+        'x-header': 'abc123',
+      },
+    });
+    await expect(ssdk.ticketmaster.SearchEvents()).resolves.toBe('response');
+    expect(executeOperation).toHaveBeenCalledWith(
+      'SearchEvents',
+      undefined,
+      {},
+      {
+        headers: {
+          'x-header': 'abc123',
+        },
+      },
+    );
   });
 
   it('can access skl if sklEngineOptions are supplied.', (): void => {
