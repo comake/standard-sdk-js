@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-unused-expressions */
 import type { A, O } from 'ts-toolbelt';
 import type { OpenApiClientConfigurationTypes } from '../../src/openapi-types/OpenApiConfigurationTypes';
