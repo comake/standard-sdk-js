@@ -109,15 +109,9 @@ type ArgsOfOperationInPathItemIfDefined<
     ? ArgsOfOperationInPathItem<T, TOperationObject, TSpec>
     : never;
 
-type ArgsOfOpenApiOperation<
+export type OpenApiArgTypes<
   T extends OpenApi,
-  TOperation extends string,
+  TOperation extends string = string,
 > = {
   [key in keyof T['paths']]: ArgsOfOperationInPathItemIfDefined<T['paths'][key], TOperation, T>
 }[keyof T['paths']];
-
-export type OpenApiArgTypes<
-  TSpec extends OpenApi,
-  TOperation extends string = string,
-  TParams = ArgsOfOpenApiOperation<TSpec, TOperation>
-> = [TParams] extends [never] ? never : TParams;

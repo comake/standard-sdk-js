@@ -177,3 +177,21 @@ type ExpectedArgs4 = {
 };
 const assertArgsNotFromUnsupportedRequestBody: A.Equals<Args4, ExpectedArgs4> = 1;
 assertArgsNotFromUnsupportedRequestBody;
+
+const openApiWithNoParamsOperation = {
+  openapi: '3.1.0',
+  info: { title: 'Example', version: '1.0.0' },
+  paths: {
+    '/path/to/operation': {
+      get: {
+        operationId: 'GetOperation',
+        responses: {},
+      },
+    },
+  },
+} as const;
+
+type Args5 = OpenApiArgTypes<typeof openApiWithNoParamsOperation, 'GetOperation'>;
+type ExpectedArgs5 = never;
+const assertArgsFromNoParamsOperation: A.Equals<Args5, ExpectedArgs5> = 1;
+assertArgsFromNoParamsOperation;
