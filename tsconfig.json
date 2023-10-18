@@ -5,6 +5,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "moduleResolution": "Node16",
     "module": "node16",
     "noErrorTruncation": true
   },
