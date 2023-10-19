@@ -1,6 +1,6 @@
 {
   "name": "@comake/standard-sdk-js",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "An open source SDK to integrate and interact with any API",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -60,7 +60,7 @@
     "@comake/skl-js-engine": "^0.11.1",
     "@commitlint/cli": "^17.4.1",
     "@commitlint/config-conventional": "^17.4.0",
-    "json-schema-to-ts": "^2.6.2"
+    "json-schema-to-ts": "^2.9.2"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
