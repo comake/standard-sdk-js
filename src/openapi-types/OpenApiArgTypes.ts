@@ -112,6 +112,13 @@ type ArgsOfOperationInPathItemIfDefined<
 export type OpenApiArgTypes<
   T extends OpenApi,
   TOperation extends string = string,
-> = {
-  [key in keyof T['paths']]: ArgsOfOperationInPathItemIfDefined<T['paths'][key], TOperation, T>
-}[keyof T['paths']];
+  TPathItemMatcher = {
+    [key in OpenApiOperationType]: Record<key, { operationId: TOperation }>
+  }[OpenApiOperationType],
+  TPathItem extends PathItem = Extract<
+    T['paths'][keyof T['paths']],
+    TPathItemMatcher
+  >,
+> = [TPathItem] extends [never]
+  ? never
+  : ArgsOfOperationInPathItemIfDefined<TPathItem, TOperation, T>;
